@@ -9,11 +9,14 @@ import warnings
 warnings.filterwarnings('ignore')
 
 # constants
-RAW_TRAITS = ['goals', 'shots', 'conversion', 'positioning', 'assists', 'crossing', 'dribbling', 'carries', 'involvement', 'accuracy', 'intent', 'receiving', 'aerial', 'on_ball', 'off_ball', 'fouls']
+RAW_TRAITS = ['goals', 'shots', 'conversion', 'positioning', 'assists', 'crossing', 'dribbling', 'carries',
+              'involvement', 'accuracy', 'intent', 'receiving', 'aerial', 'on_ball', 'off_ball', 'fouls']
 COMPOSITE_TRAITS = ['scoring', 'creating', 'passing', 'defending']
-RAW_TRAITS_DISPLAY = ['Goals', 'Shots', 'Conversion', 'Positioning', 'Assists', 'Crossing', 'Dribbling', 'Carries', 'Involvement', 'Accuracy', 'Intent', 'Receiving', 'Aerial', 'On ball', 'Off ball', 'Fouls']
+RAW_TRAITS_DISPLAY = ['Goals', 'Shots', 'Conversion', 'Positioning', 'Assists', 'Crossing', 'Dribbling', 'Carries',
+                      'Involvement', 'Accuracy', 'Intent', 'Receiving', 'Aerial', 'On ball', 'Off ball', 'Fouls']
 COMPOSITE_TRAITS_DISPLAY = ['Scoring', 'Creating', 'Passing', 'Defending']
-SIMILARITY_TABLE_HEADERS = ['Player details', 'Similarity score', 'Rating', 'Player name', 'Season', 'League', 'Team', 'Position', 'Nationality', 'Age', 'Total minutes']
+SIMILARITY_TABLE_HEADERS = ['Player details', 'Similarity score', 'Rating', 'Player name', 'Season', 'League', 'Team',
+                            'Position', 'Nationality', 'Age', 'Total minutes']
 DARK_BLUE_HEX = '#4074B2'
 LIGHT_BLUE_HEX = '#ADCDF0'
 DARK_ORANGE_HEX = '#E77052'
@@ -36,19 +39,75 @@ w_full_df = pd.read_csv(W_DF_PATH, index_col=0)
 cf_full_df = pd.read_csv(CF_DF_PATH, index_col=0)
 all_df = pd.read_csv(ALL_DF_PATH, index_col=0)
 
-def get_all_player_details(df=all_df):
+def get_all_player_details():
+    # sort df by rating in descending order
+    all_df_sorted = all_df.copy()
+    all_df_sorted = all_df_sorted.sort_values(by='rating', ascending=False)
+
+    return all_df_sorted.player_details.tolist()
+
+def get_position_player_details(player_details):
+    # get player position
+    all_df_copy = all_df.copy()
+    position = all_df_copy[all_df_copy.player_details==player_details].position.tolist()[0]
 
     # sort df by rating in descending order
-    df_sorted = df.copy()
-    df_sorted = df_sorted.sort_values(by='rating', ascending=False)
+    position_df_sorted = all_df_copy[all_df_copy.position==position].sort_values(by='rating', ascending=False)
 
-    return df_sorted.player_details.tolist()
+    return position_df_sorted.player_details.tolist()
+
+def get_all_seasons():
+    all_df_copy = all_df.copy()
+
+    return sorted(set(all_df_copy.season), reverse=True)
+
+def get_all_leagues():
+    all_df_copy = all_df.copy()
+
+    return sorted(set(all_df_copy.league))
+
+def get_primary_positions(player_details):
+    # get player position
+    all_df_copy = all_df.copy()
+    position = all_df_copy[all_df_copy.player_details==player_details].position.tolist()[0]
+
+    return sorted(set(all_df_copy[all_df_copy.position==position].primary_position))
+
+def get_min_age(player_details):
+    # get player position
+    all_df_copy = all_df.copy()
+    position = all_df_copy[all_df_copy.player_details==player_details].position.tolist()[0]
+
+    return int(all_df_copy[all_df_copy.position==position].age.min())
+
+def get_max_age(player_details):
+    # get player position
+    all_df_copy = all_df.copy()
+    position = all_df_copy[all_df_copy.player_details==player_details].position.tolist()[0]
+
+    return int(all_df_copy[all_df_copy.position==position].age.max())
+
+def get_min_apps(player_details):
+    # get player position
+    all_df_copy = all_df.copy()
+    position = all_df_copy[all_df_copy.player_details == player_details].position.tolist()[0]
+
+    return int(all_df_copy[all_df_copy.position == position].apps.min())
+
+def get_max_apps(player_details):
+    # get player position
+    all_df_copy = all_df.copy()
+    position = all_df_copy[all_df_copy.player_details == player_details].position.tolist()[0]
+
+    return int(all_df_copy[all_df_copy.position == position].apps.max())
 
 def get_position_df(player_details):
 
+    all_df_copy = all_df.copy()
+
     # get player position
     try:
-        position = all_df[all_df.player_details==player_details].position.tolist()[0]
+        position = all_df_copy[all_df_copy.player_details==player_details].position.tolist()[0]
 
         if position == 'CB':
             return cb_full_df
@@ -112,7 +171,8 @@ def get_scores(player_traits, others_traits, weights):
     similarity_scores = 1 - (2 / np.pi) * np.arccos(similarity_scores)
 
     # normalise similarity scores
-    similarity_scores = (similarity_scores - similarity_scores.min()) / (similarity_scores.max() - similarity_scores.min())
+    similarity_scores = (similarity_scores - similarity_scores.min()) / (similarity_scores.max() -
+                                                                         similarity_scores.min())
 
     return similarity_scores
 
@@ -134,26 +194,32 @@ def filter_df(df, filters):
         primary_positions = filters['primary_positions']
 
     if filters['min_age'] is None:
-        min_age = 0
+        min_age = 18
     else:
         min_age = filters['min_age']
 
     if filters['max_age'] is None:
-        max_age = 100
+        max_age = 45
     else:
         max_age = filters['max_age']
 
-    if filters['min_total_mins'] is None:
-        min_total_mins = 0
+    if filters['min_apps'] is None:
+        min_apps = 12
     else:
-        min_total_mins = filters['min_total_mins']
+        min_apps = filters['min_apps']
+
+    if filters['max_apps'] is None:
+        max_apps = 38
+    else:
+        max_apps = filters['max_apps']
 
     filtered_df = df[(df.season.isin(seasons)) &
                      (df.league.isin(leagues)) &
                      (df.primary_position.isin(primary_positions)) &
                      (df.age>=min_age) &
                      (df.age<=max_age) &
-                     (df.total_mins>=min_total_mins)]
+                     (df.apps>=min_apps) &
+                     (df.apps<=max_apps)]
 
     return filtered_df
 
@@ -170,14 +236,16 @@ def get_nontraits_table_similar_players(results, df, player_details, top_n):
 
     # rearrange columns
     temp_cols = similar_players_df.columns.tolist()
-    new_cols = temp_cols[:1] + temp_cols[-1:] + temp_cols[13:14] + temp_cols[1:5] + temp_cols[6:8] + temp_cols[9:10] + temp_cols[12:13]
+    new_cols = temp_cols[:1] + temp_cols[-1:] + temp_cols[13:14] + temp_cols[1:5] + temp_cols[6:8] + temp_cols[9:10] + \
+               temp_cols[12:13]
     similar_players_df = similar_players_df[new_cols]
 
     # sort dataframe by similarity score
     similar_players_df = similar_players_df.sort_values(by='similarity_score', ascending=False)
 
     # convert similarity scores into percentage
-    similar_players_df['similarity_score'] = similar_players_df['similarity_score'].mul(100).round(2).astype(str).add('%')
+    similar_players_df['similarity_score'] = similar_players_df['similarity_score'].mul(100).round(2).astype(str).\
+        add('%')
 
     # rename dataframe columns
     similar_players_df.columns = SIMILARITY_TABLE_HEADERS
@@ -190,13 +258,14 @@ def get_nontraits_table_similar_players(results, df, player_details, top_n):
                                    cells=dict(
                                        values=[similar_players_df[header] for header in SIMILARITY_TABLE_HEADERS],
                                        fill_color=LIGHT_BLUE_HEX,
-                                       align=['left', 'center', 'center', 'left', 'left', 'left', 'left', 'left', 'left', 'center', 'center'],
+                                       align=['left', 'center', 'center', 'left', 'left', 'left', 'left', 'left',
+                                              'left', 'center', 'center'],
                                        font=dict(color='white', size=12)))
                           ])
 
     # table details
-    fig.update_layout(height=500,
-                      width=1000,
+    fig.update_layout(# height=500,
+                      # width=1000,
                       title=f'Top {top_n} similar players to {player_details}',
                       template='plotly_dark'
                       )
@@ -231,7 +300,8 @@ def table_similar_players_1(player_details, df, top_n, traits_weights=None, filt
 
     # asserts that traits weights have same length as matrix rows
     if traits_weights is not None:
-        assert len(traits_weights) == len(raw_traits_np[0]), f'Weights have distinct shape ({len(traits_weights)},) from matrix rows ({len(raw_traits_np[0])},)'
+        assert len(traits_weights) == len(raw_traits_np[0]), f'Weights have distinct shape ({len(traits_weights)},) ' \
+                                                             f'from matrix rows ({len(raw_traits_np[0])},)'
 
     # get indices of queried player names
     player_index = all_player_details.index(player_details)
@@ -287,7 +357,8 @@ def table_similar_players_1(player_details, df, top_n, traits_weights=None, filt
 
     return fig, similar_players
 
-def table_similar_players_2(player_1_details, player_2_details, df, top_n, player_weights=None, traits_weights=None, filters=None):
+def table_similar_players_2(player_1_details, player_2_details, df, top_n, player_weights=None, traits_weights=None,
+                            filters=None):
 
     # get all player details
     all_player_details = df.player_details.tolist()
@@ -313,8 +384,8 @@ def table_similar_players_2(player_1_details, player_2_details, df, top_n, playe
 
     # asserts that traits weights have same length as matrix rows
     if traits_weights is not None:
-        assert len(traits_weights) == len(raw_traits_np[
-                                              0]), f'Weights have distinct shape ({len(traits_weights)},) from matrix rows ({len(raw_traits_np[0])},)'
+        assert len(traits_weights) == len(raw_traits_np[0]), f'Weights have distinct shape ({len(traits_weights)},) ' \
+                                                             f'from matrix rows ({len(raw_traits_np[0])},)'
 
     if player_weights is not None:
         # assert that player weights sum up to 1
@@ -354,7 +425,8 @@ def table_similar_players_2(player_1_details, player_2_details, df, top_n, playe
                                      weights=player_weights)
 
     # combined player details
-    combined_player_details = f'{player_1_details} ({player_weights[0] * 100:.0f}%) + {player_2_details} ({player_weights[1] * 100:.0f}%)'
+    combined_player_details = f'{player_1_details} ({player_weights[0] * 100:.0f}%) + {player_2_details} ' \
+                              f'({player_weights[1] * 100:.0f}%)'
 
     # get similarity scores
     similarity_scores = get_scores(combined_raw_traits, raw_traits_np, traits_weights)
@@ -413,8 +485,8 @@ def rating_indicator_1(query_player_details, similar_player_details, df):
                                domain={'row': 1, 'column': 0}))
 
     # card details
-    fig.update_layout(height=500,
-                      width=500,
+    fig.update_layout(#height=500,
+                      #width=500,
                       title={'text': 'Rating', 'x': 0.5},
                       grid={'rows': 2, 'columns': 1},
                       template='plotly_dark')
@@ -436,10 +508,12 @@ def rating_indicator_2(query_player_1_details, query_player_2_details, similar_p
     query_player_2_rating = df[df.player_details == query_player_2_details].rating.tolist()[0]
 
     # combine ratings
-    combined_player_rating = np.average(np.array([query_player_1_rating, query_player_2_rating]), axis=0, weights=player_weights)
+    combined_player_rating = np.average(np.array([query_player_1_rating, query_player_2_rating]), axis=0,
+                                        weights=player_weights)
 
     # combined player details
-    combined_player_details = f'{query_player_1_details} ({player_weights[0] * 100:.0f}%) + {query_player_2_details} ({player_weights[1] * 100:.0f}%)'
+    combined_player_details = f'{query_player_1_details} ({player_weights[0] * 100:.0f}%) + {query_player_2_details} ' \
+                              f'({player_weights[1] * 100:.0f}%)'
 
     # get similar player rating
     similar_player_rating = df[df.player_details == similar_player_details].rating.tolist()[0]
@@ -461,8 +535,8 @@ def rating_indicator_2(query_player_1_details, query_player_2_details, similar_p
                                domain={'row': 1, 'column': 0}))
 
     # card details
-    fig.update_layout(height=500,
-                      width=500,
+    fig.update_layout(#height=500,
+                      #width=500,
                       title={'text': 'Rating', 'x': 0.5},
                       grid={'rows': 2, 'columns': 1},
                       template='plotly_dark')
@@ -535,8 +609,8 @@ def traits_radar_chart_1(query_player_details, similar_player_details, df):
                   )
 
     # plot details
-    fig.update_layout(height=500,
-                      width=1000,
+    fig.update_layout(#height=500,
+                      #width=1000,
                       polar={'radialaxis': {'visible': True}},
                       showlegend=True,
                       legend=dict(x=0, y=-0.5),
@@ -550,7 +624,8 @@ def traits_radar_chart_1(query_player_details, similar_player_details, df):
 
     return fig
 
-def traits_radar_chart_2(query_player_1_details, query_player_2_details, similar_player_details, df, player_weights=None):
+def traits_radar_chart_2(query_player_1_details, query_player_2_details, similar_player_details, df,
+                         player_weights=None):
 
     if player_weights is not None:
         # assert that player weights sum up to 1
@@ -565,9 +640,11 @@ def traits_radar_chart_2(query_player_1_details, query_player_2_details, similar
     composite_trait_values_2 = df[df.player_details == query_player_2_details][COMPOSITE_TRAITS].values[0].tolist()
 
     # combine traits for query players traits
-    raw_trait_values_combined = np.average(np.array([raw_trait_values_1, raw_trait_values_2]), axis=0, weights=player_weights).tolist()
+    raw_trait_values_combined = np.average(np.array([raw_trait_values_1, raw_trait_values_2]), axis=0,
+                                           weights=player_weights).tolist()
     raw_trait_values_combined += raw_trait_values_combined[:1]
-    composite_trait_values_combined = np.average(np.array([composite_trait_values_1, composite_trait_values_2]), axis=0, weights=player_weights).tolist()
+    composite_trait_values_combined = np.average(np.array([composite_trait_values_1, composite_trait_values_2]), axis=0,
+                                                 weights=player_weights).tolist()
     composite_trait_values_combined += composite_trait_values_combined[:1]
 
     # get values for similar player traits
@@ -577,7 +654,8 @@ def traits_radar_chart_2(query_player_1_details, query_player_2_details, similar
     composite_trait_values_3 += composite_trait_values_3[:1]
 
     # combined player details
-    combined_player_details = f'{query_player_1_details} ({player_weights[0] * 100:.0f}%) + {query_player_2_details} ({player_weights[1] * 100:.0f}%)'
+    combined_player_details = f'{query_player_1_details} ({player_weights[0] * 100:.0f}%) + {query_player_2_details} ' \
+                              f'({player_weights[1] * 100:.0f}%)'
 
     # adjust raw and composite traits lists
     circ_raw_traits = RAW_TRAITS_DISPLAY + RAW_TRAITS_DISPLAY[:1]
@@ -629,8 +707,8 @@ def traits_radar_chart_2(query_player_1_details, query_player_2_details, similar
                   )
 
     # plot details
-    fig.update_layout(height=500,
-                      width=1000,
+    fig.update_layout(#height=500,
+                      #width=1000,
                       polar={'radialaxis': {'visible': True}},
                       showlegend=True,
                       legend=dict(x=0, y=-0.5),
@@ -655,8 +733,10 @@ def difference_bar_chart_1(query_player_details, similar_player_details, df):
     composite_trait_values_2 = df[df.player_details == similar_player_details][COMPOSITE_TRAITS].values[0].tolist()
 
     # get difference in traits values
-    raw_traits_diff = [raw_trait_1 - raw_trait_2 for raw_trait_1, raw_trait_2 in zip(raw_trait_values_1, raw_trait_values_2)]
-    composite_traits_diff = [composite_trait_1 - composite_trait_2 for composite_trait_1, composite_trait_2 in zip(composite_trait_values_1, composite_trait_values_2)]
+    raw_traits_diff = [raw_trait_1 - raw_trait_2 for raw_trait_1, raw_trait_2 in zip(raw_trait_values_1,
+                                                                                     raw_trait_values_2)]
+    composite_traits_diff = [composite_trait_1 - composite_trait_2 for composite_trait_1, composite_trait_2 in
+                             zip(composite_trait_values_1, composite_trait_values_2)]
 
     # get positive and negative lists for raw traits differences
     raw_traits_pos_diff = []
@@ -724,8 +804,8 @@ def difference_bar_chart_1(query_player_details, similar_player_details, df):
                   )
 
     # plot details
-    fig.update_layout(height=500,
-                      width=1000,
+    fig.update_layout(#height=500,
+                      #width=1000,
                       showlegend=True,
                       legend=dict(x=0, y=-0.5),
                       template='plotly_dark'
@@ -740,7 +820,8 @@ def difference_bar_chart_1(query_player_details, similar_player_details, df):
 
     return fig
 
-def difference_bar_chart_2(query_player_1_details, query_player_2_details, similar_player_details, df, player_weights=None):
+def difference_bar_chart_2(query_player_1_details, query_player_2_details, similar_player_details, df,
+                           player_weights=None):
 
     if player_weights is not None:
         # assert that player weights sum up to 1
@@ -755,16 +836,20 @@ def difference_bar_chart_2(query_player_1_details, query_player_2_details, simil
     composite_trait_values_2 = df[df.player_details == query_player_2_details][COMPOSITE_TRAITS].values[0].tolist()
 
     # combine traits for query players traits
-    raw_trait_values_combined = np.average(np.array([raw_trait_values_1, raw_trait_values_2]), axis=0, weights=player_weights).tolist()
-    composite_trait_values_combined = np.average(np.array([composite_trait_values_1, composite_trait_values_2]), axis=0, weights=player_weights).tolist()
+    raw_trait_values_combined = np.average(np.array([raw_trait_values_1, raw_trait_values_2]), axis=0,
+                                           weights=player_weights).tolist()
+    composite_trait_values_combined = np.average(np.array([composite_trait_values_1, composite_trait_values_2]), axis=0,
+                                                 weights=player_weights).tolist()
 
     # get values for similar player traits
     raw_trait_values_3 = df[df.player_details == similar_player_details][RAW_TRAITS].values[0].tolist()
     composite_trait_values_3 = df[df.player_details == similar_player_details][COMPOSITE_TRAITS].values[0].tolist()
 
     # create traits difference in traits values
-    raw_traits_diff = [raw_trait_1 - raw_trait_2 for raw_trait_1, raw_trait_2 in zip(raw_trait_values_combined, raw_trait_values_3)]
-    composite_traits_diff = [composite_trait_1 - composite_trait_2 for composite_trait_1, composite_trait_2 in zip(composite_trait_values_combined, composite_trait_values_3)]
+    raw_traits_diff = [raw_trait_1 - raw_trait_2 for raw_trait_1, raw_trait_2 in zip(raw_trait_values_combined,
+                                                                                     raw_trait_values_3)]
+    composite_traits_diff = [composite_trait_1 - composite_trait_2 for composite_trait_1, composite_trait_2 in
+                             zip(composite_trait_values_combined, composite_trait_values_3)]
 
     # get positive and negative lists for raw traits differences
     raw_traits_pos_diff = []
@@ -793,7 +878,8 @@ def difference_bar_chart_2(query_player_1_details, query_player_2_details, simil
             neg_composite_traits.append(trait)
 
     # combined player details
-    combined_player_details = f'{query_player_1_details} ({player_weights[0] * 100:.0f}%) + {query_player_2_details} ({player_weights[1] * 100:.0f}%)'
+    combined_player_details = f'{query_player_1_details} ({player_weights[0] * 100:.0f}%) + {query_player_2_details} ' \
+                              f'({player_weights[1] * 100:.0f}%)'
 
     # create traits difference bar charts
     fig = make_subplots(rows=1,
@@ -836,8 +922,8 @@ def difference_bar_chart_2(query_player_1_details, query_player_2_details, simil
                   )
 
     # plot details
-    fig.update_layout(height=500,
-                      width=1000,
+    fig.update_layout(#height=500,
+                      #width=1000,
                       showlegend=True,
                       legend=dict(x=0, y=-0.5),
                       template='plotly_dark'
