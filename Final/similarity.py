@@ -15,8 +15,8 @@ COMPOSITE_TRAITS = ['scoring', 'creating', 'passing', 'defending']
 RAW_TRAITS_DISPLAY = ['Goals', 'Shots', 'Conversion', 'Positioning', 'Assists', 'Crossing', 'Dribbling', 'Carries',
                       'Involvement', 'Accuracy', 'Intent', 'Receiving', 'Aerial', 'On ball', 'Off ball', 'Fouls']
 COMPOSITE_TRAITS_DISPLAY = ['Scoring', 'Creating', 'Passing', 'Defending']
-SIMILARITY_TABLE_HEADERS = ['Player details', 'Similarity score', 'Rating', 'Player name', 'Season', 'League', 'Team',
-                            'Position', 'Nationality', 'Age', 'Total minutes']
+SIMILARITY_TABLE_HEADERS = ['Rank', 'Similarity', 'Name', 'Team', 'Season', 'League', 'Position', 'Age', 'Apps',
+                            'Nationality']
 DARK_BLUE_HEX = '#4074B2'
 LIGHT_BLUE_HEX = '#ADCDF0'
 DARK_ORANGE_HEX = '#E77052'
@@ -171,8 +171,7 @@ def get_scores(player_traits, others_traits, weights):
     similarity_scores = 1 - (2 / np.pi) * np.arccos(similarity_scores)
 
     # normalise similarity scores
-    similarity_scores = (similarity_scores - similarity_scores.min()) / (similarity_scores.max() -
-                                                                         similarity_scores.min())
+    similarity_scores = (similarity_scores - similarity_scores.min()) / (1 - similarity_scores.min())
 
     return similarity_scores
 
@@ -236,12 +235,16 @@ def get_nontraits_table_similar_players(results, df, player_details, top_n):
 
     # rearrange columns
     temp_cols = similar_players_df.columns.tolist()
-    new_cols = temp_cols[:1] + temp_cols[-1:] + temp_cols[13:14] + temp_cols[1:5] + temp_cols[6:8] + temp_cols[9:10] + \
-               temp_cols[12:13]
+    new_cols = temp_cols[-1:] + temp_cols[1:2] + temp_cols[4:5] + temp_cols[2:3] + temp_cols[3:4] + temp_cols[6:7] + \
+               temp_cols[9:11] + temp_cols[7:8]
     similar_players_df = similar_players_df[new_cols]
 
     # sort dataframe by similarity score
     similar_players_df = similar_players_df.sort_values(by='similarity_score', ascending=False)
+
+    # insert a rank column
+    rank_list = list(range(1, len(all_player_details)+1))
+    similar_players_df.insert(0, 'Rank', rank_list)
 
     # convert similarity scores into percentage
     similar_players_df['similarity_score'] = similar_players_df['similarity_score'].mul(100).round(2).astype(str).\
@@ -250,30 +253,31 @@ def get_nontraits_table_similar_players(results, df, player_details, top_n):
     # rename dataframe columns
     similar_players_df.columns = SIMILARITY_TABLE_HEADERS
 
-    # create table of similar players
-    fig = go.Figure(data=[go.Table(header=dict(values=SIMILARITY_TABLE_HEADERS,
-                                               fill_color=DARK_BLUE_HEX,
-                                               align='center',
-                                               font=dict(color='white', size=12)),
-                                   cells=dict(
-                                       values=[similar_players_df[header] for header in SIMILARITY_TABLE_HEADERS],
-                                       fill_color=LIGHT_BLUE_HEX,
-                                       align=['left', 'center', 'center', 'left', 'left', 'left', 'left', 'left',
-                                              'left', 'center', 'center'],
-                                       font=dict(color='white', size=12)))
-                          ])
-
-    # table details
-    fig.update_layout(# height=500,
-                      # width=1000,
-                      title=f'Top {top_n} similar players to {player_details}',
-                      template='plotly_dark'
-                      )
-    fig.layout.title.update(y=0.85)
-
-    # fig.show()
-
-    return fig
+    return similar_players_df
+    # # create table of similar players
+    # fig = go.Figure(data=[go.Table(header=dict(values=SIMILARITY_TABLE_HEADERS,
+    #                                            fill_color=DARK_BLUE_HEX,
+    #                                            align='center',
+    #                                            font=dict(color='white', size=12)),
+    #                                cells=dict(
+    #                                    values=[similar_players_df[header] for header in SIMILARITY_TABLE_HEADERS],
+    #                                    fill_color=LIGHT_BLUE_HEX,
+    #                                    align=['left', 'center', 'center', 'left', 'left', 'left', 'left', 'left',
+    #                                           'left', 'center', 'center'],
+    #                                    font=dict(color='white', size=12)))
+    #                       ])
+    #
+    # # table details
+    # fig.update_layout(# height=500,
+    #                   # width=1000,
+    #                   title=f'Top {top_n} similar players to {player_details}',
+    #                   template='plotly_dark'
+    #                   )
+    # fig.layout.title.update(y=0.85)
+    #
+    # # fig.show()
+    #
+    # return fig
 
 def table_similar_players_1(player_details, df, top_n, traits_weights=None, filters=None):
 
@@ -482,14 +486,16 @@ def rating_indicator_1(query_player_details, similar_player_details, df):
                                value=similar_player_rating,
                                delta=dict(reference=query_player_rating),
                                title=dict(font=dict(size=12), text=similar_player_details),
-                               domain={'row': 1, 'column': 0}))
+                               domain={'row': 0, 'column': 1}))
 
     # card details
-    fig.update_layout(#height=500,
+    fig.update_layout(height=300,
                       #width=500,
-                      title={'text': 'Rating', 'x': 0.5},
-                      grid={'rows': 2, 'columns': 1},
-                      template='plotly_dark')
+                      title={'text': 'Overall Rating', 'x': 0.5},
+                      grid={'rows': 1, 'columns': 2},
+                      template='plotly_dark',
+                      font={'size': 11}
+    )
 
     # fig.show()
 
@@ -532,14 +538,16 @@ def rating_indicator_2(query_player_1_details, query_player_2_details, similar_p
                                value=similar_player_rating,
                                delta=dict(reference=combined_player_rating),
                                title=dict(font=dict(size=12), text=similar_player_details),
-                               domain={'row': 1, 'column': 0}))
+                               domain={'row': 0, 'column': 1}))
 
     # card details
-    fig.update_layout(#height=500,
+    fig.update_layout(height=300,
                       #width=500,
-                      title={'text': 'Rating', 'x': 0.5},
-                      grid={'rows': 2, 'columns': 1},
-                      template='plotly_dark')
+                      title={'text': 'Overall Rating', 'x': 0.5},
+                      grid={'rows': 1, 'columns': 2},
+                      template='plotly_dark',
+                      font={'size': 11}
+    )
 
     # fig.show()
 
@@ -566,9 +574,10 @@ def traits_radar_chart_1(query_player_details, similar_player_details, df):
     # create radar charts
     fig = make_subplots(rows=1,
                         cols=2,
-                        horizontal_spacing=0.05,
+                        # horizontal_spacing=0.01,
+                        # vertical_spacing=0.01,
                         specs=[[{'type': 'polar'}, {'type': 'polar'}]],
-                        subplot_titles=('Raw Traits Comparison', 'Composite Traits Comparison'))
+                        subplot_titles=('Raw Traits', 'Composite Traits'))
 
     # plot raw traits radar chart
     fig.add_trace(go.Scatterpolar(r=raw_trait_values_1,
@@ -609,12 +618,13 @@ def traits_radar_chart_1(query_player_details, similar_player_details, df):
                   )
 
     # plot details
-    fig.update_layout(#height=500,
+    fig.update_layout(height=700,
                       #width=1000,
                       polar={'radialaxis': {'visible': True}},
                       showlegend=True,
-                      legend=dict(x=0, y=-0.5),
-                      template='plotly_dark'
+                      legend=dict(x=0, y=-0.2),
+                      template='plotly_dark',
+                      font={'size': 11}
                       )
     # fig.update_polars(radialaxis=dict(range=[0, 10]))
     fig.layout.annotations[0].update(y=1.1)
@@ -664,9 +674,10 @@ def traits_radar_chart_2(query_player_1_details, query_player_2_details, similar
     # create radar charts
     fig = make_subplots(rows=1,
                         cols=2,
-                        horizontal_spacing=0.05,
+                        # horizontal_spacing=0.01,
+                        # vertical_spacing=0.01,
                         specs=[[{'type': 'polar'}, {'type': 'polar'}]],
-                        subplot_titles=('Raw Traits Comparison', 'Composite Traits Comparison'))
+                        subplot_titles=('Raw Traits', 'Composite Traits'))
 
     # plot raw traits radar chart
     fig.add_trace(go.Scatterpolar(r=raw_trait_values_combined,
@@ -707,12 +718,13 @@ def traits_radar_chart_2(query_player_1_details, query_player_2_details, similar
                   )
 
     # plot details
-    fig.update_layout(#height=500,
+    fig.update_layout(height=700,
                       #width=1000,
                       polar={'radialaxis': {'visible': True}},
                       showlegend=True,
-                      legend=dict(x=0, y=-0.5),
-                      template='plotly_dark'
+                      legend=dict(x=0, y=-0.2),
+                      template='plotly_dark',
+                      font={'size': 11}
                       )
     # fig.update_polars(radialaxis=dict(range=[0, 10]))
     fig.layout.annotations[0].update(y=1.1)
@@ -767,7 +779,7 @@ def difference_bar_chart_1(query_player_details, similar_player_details, df):
     # create traits difference bar charts
     fig = make_subplots(rows=1,
                         cols=2,
-                        horizontal_spacing=0.05,
+                        # horizontal_spacing=0.01,
                         specs=[[{'type': 'bar'}, {'type': 'bar'}]],
                         subplot_titles=('Raw Traits Difference', 'Composite Traits Difference'))
 
@@ -804,17 +816,18 @@ def difference_bar_chart_1(query_player_details, similar_player_details, df):
                   )
 
     # plot details
-    fig.update_layout(#height=500,
+    fig.update_layout(height=700,
                       #width=1000,
                       showlegend=True,
-                      legend=dict(x=0, y=-0.5),
-                      template='plotly_dark'
+                      legend=dict(x=0, y=-0.2),
+                      template='plotly_dark',
+                      font={'size': 11}
                       )
-    fig.update_xaxes(categoryorder='array', categoryarray=RAW_TRAITS, row=1, col=1)
-    fig.update_xaxes(categoryorder='array', categoryarray=COMPOSITE_TRAITS, row=1, col=2)
+    fig.update_xaxes(categoryorder='array', categoryarray=RAW_TRAITS_DISPLAY, row=1, col=1)
+    fig.update_xaxes(categoryorder='array', categoryarray=COMPOSITE_TRAITS_DISPLAY, row=1, col=2)
     fig.update_yaxes(range=[-4, 4])
-    fig.layout.annotations[0].update(y=1.05)
-    fig.layout.annotations[1].update(y=1.05)
+    fig.layout.annotations[0].update(y=1.1)
+    fig.layout.annotations[1].update(y=1.1)
 
     # fig.show()
 
@@ -884,7 +897,7 @@ def difference_bar_chart_2(query_player_1_details, query_player_2_details, simil
     # create traits difference bar charts
     fig = make_subplots(rows=1,
                         cols=2,
-                        horizontal_spacing=0.05,
+                        # horizontal_spacing=0.01,
                         specs=[[{'type': 'bar'}, {'type': 'bar'}]],
                         subplot_titles=('Raw Traits Difference', 'Composite Traits Difference'))
 
@@ -922,18 +935,28 @@ def difference_bar_chart_2(query_player_1_details, query_player_2_details, simil
                   )
 
     # plot details
-    fig.update_layout(#height=500,
+    fig.update_layout(height=700,
                       #width=1000,
                       showlegend=True,
-                      legend=dict(x=0, y=-0.5),
-                      template='plotly_dark'
+                      legend=dict(x=0, y=-0.2),
+                      template='plotly_dark',
+                      font={'size': 11}
                       )
-    fig.update_xaxes(categoryorder='array', categoryarray=RAW_TRAITS, row=1, col=1)
-    fig.update_xaxes(categoryorder='array', categoryarray=COMPOSITE_TRAITS, row=1, col=2)
+    fig.update_xaxes(categoryorder='array', categoryarray=RAW_TRAITS_DISPLAY, row=1, col=1)
+    fig.update_xaxes(categoryorder='array', categoryarray=COMPOSITE_TRAITS_DISPLAY, row=1, col=2)
     fig.update_yaxes(range=[-4, 4])
-    fig.layout.annotations[0].update(y=1.05)
-    fig.layout.annotations[1].update(y=1.05)
+    fig.layout.annotations[0].update(y=1.1)
+    fig.layout.annotations[1].update(y=1.1)
 
     # fig.show()
+
+    return fig
+
+
+def blank_figure():
+    fig = go.Figure(go.Scatter(x=[], y=[]))
+    fig.update_layout(template='plotly_dark')
+    fig.update_xaxes(showgrid=False, showticklabels=False, zeroline=False)
+    fig.update_yaxes(showgrid=False, showticklabels=False, zeroline=False)
 
     return fig
