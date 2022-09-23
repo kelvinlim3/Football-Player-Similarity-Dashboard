@@ -1,0 +1,61 @@
+.dropdown {
+  margin-left: 0px;
+  margin-right: 0px;
+  margin-top: 0px;
+  text-align: left;
+}
+.dropdown .Select-control{
+  background-color: #333333;
+}
+.dropdown .Select-menu-outer{
+  background-color: #333333;
+}
+.dropdown .Select-value{
+  background-color: #4074B2;
+  color: white;
+  font-size: 14px;
+}
+.dropdown .VirtualizedSelectFocusedOption {
+  background-color: #4074B2;
+  color: white;
+}
+.dropdown .VirtualizedSelectOption {
+  font-size: 14px;
+}
+
+
+.slider {
+  margin-left: -15px;
+  margin-right: -15px;
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+.slider .rc-slider-handle  {
+  background-color: #4074B2;
+  border: 0;
+}
+.slider .rc-slider-track {
+  background-color: #4074B2;
+}
+.slider .rc-slider-dot-active {
+  background-color: #4074B2;
+  border: 0;
+}
+
+.range_slider {
+  margin-left: -15px;
+  margin-right: -15px;
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+.range_slider .rc-slider-handle  {
+  background-color: #4074B2;
+  border: 0;
+}
+.range_slider .rc-slider-track {
+  background-color: #4074B2;
+}
+.range_slider .rc-slider-dot-active {
+  background-color: #4074B2;
+  border: 0;
+}

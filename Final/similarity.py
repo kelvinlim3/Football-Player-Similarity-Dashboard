@@ -73,33 +73,29 @@ def get_primary_positions(player_details):
 
     return sorted(set(all_df_copy[all_df_copy.position==position].primary_position))
 
-def get_min_age(player_details):
+def get_min_age():
     # get player position
     all_df_copy = all_df.copy()
-    position = all_df_copy[all_df_copy.player_details==player_details].position.tolist()[0]
 
-    return int(all_df_copy[all_df_copy.position==position].age.min())
+    return int(all_df_copy.age.min())
 
-def get_max_age(player_details):
+def get_max_age():
     # get player position
     all_df_copy = all_df.copy()
-    position = all_df_copy[all_df_copy.player_details==player_details].position.tolist()[0]
 
-    return int(all_df_copy[all_df_copy.position==position].age.max())
+    return int(all_df_copy.age.max())
 
-def get_min_apps(player_details):
+def get_min_total_mins():
     # get player position
     all_df_copy = all_df.copy()
-    position = all_df_copy[all_df_copy.player_details == player_details].position.tolist()[0]
 
-    return int(all_df_copy[all_df_copy.position == position].apps.min())
+    return int(all_df_copy.total_mins.min())
 
-def get_max_apps(player_details):
+def get_max_total_mins():
     # get player position
     all_df_copy = all_df.copy()
-    position = all_df_copy[all_df_copy.player_details == player_details].position.tolist()[0]
 
-    return int(all_df_copy[all_df_copy.position == position].apps.max())
+    return int(all_df_copy.total_mins.max())
 
 def get_position_df(player_details):
 
