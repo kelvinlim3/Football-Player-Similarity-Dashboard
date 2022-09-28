@@ -1,8 +1,14 @@
+
 .dropdown {
   margin-left: 0px;
   margin-right: 0px;
   margin-top: 0px;
   text-align: left;
+}
+.dropdown-labels {
+  margin-left: 20px;
+  color: white;
+  font-weight: bold;
 }
 .dropdown .Select-control{
   background-color: #333333;
@@ -20,6 +26,24 @@
   color: white;
 }
 .dropdown .VirtualizedSelectOption {
+  font-size: 14px;
+}
+
+.input {
+  margin-left: 0px;
+  margin-right: 0px;
+  margin-top: 0px;
+  text-align: left;
+}
+.input .Select-control{
+  background-color: #333333;
+}
+.input .Select-menu-outer{
+  background-color: #333333;
+}
+.input .Select-value{
+  background-color: #4074B2;
+  color: white;
   font-size: 14px;
 }
 

@@ -15,111 +15,112 @@ COMPOSITE_TRAITS = ['scoring', 'creating', 'passing', 'defending']
 RAW_TRAITS_DISPLAY = ['Goals', 'Shots', 'Conversion', 'Positioning', 'Assists', 'Crossing', 'Dribbling', 'Carries',
                       'Involvement', 'Accuracy', 'Intent', 'Receiving', 'Aerial', 'On ball', 'Off ball', 'Fouls']
 COMPOSITE_TRAITS_DISPLAY = ['Scoring', 'Creating', 'Passing', 'Defending']
-SIMILARITY_TABLE_HEADERS = ['Rank', 'Similarity', 'Name', 'Team', 'Season', 'League', 'Position', 'Age', 'Apps',
-                            'Nationality']
+SIMILARITY_TABLE_HEADERS = ['RANK', 'PLAYER NAME', 'NATIONALITY', 'AGE', 'TEAM', 'PRIMARY POSITION', 'SIMILARITY SCORE']
+TOP_N = 20
+MIN_AGE = 17 #similarity.get_min_age()
+MAX_AGE = 45 # similarity.get_max_age()
+MIN_TOTAL_MINS = 720 # similarity.get_min_total_mins()
+MAX_TOTAL_MINS = 3420 # similarity.get_max_total_mins()
+MIN_RATING = 0.6 # similarity.get_min_rating()
+MAX_RATING = 4.9 # similarity.get_max_rating()
 DARK_BLUE_HEX = '#4074B2'
 LIGHT_BLUE_HEX = '#ADCDF0'
 DARK_ORANGE_HEX = '#E77052'
 
 # paths to dataframe csv files
-CB_DF_PATH = 'Data/df_cb.csv'
-FB_DF_PATH = 'Data/df_fb.csv'
-DM_DF_PATH = 'Data/df_dm.csv'
-M_DF_PATH = 'Data/df_m.csv'
-W_DF_PATH = 'Data/df_w.csv'
-CF_DF_PATH = 'Data/df_cf.csv'
-ALL_DF_PATH = 'Data/df_all.csv'
+# CB_DF_PATH = 'Data/df_cb.csv'
+# FB_DF_PATH = 'Data/df_fb.csv'
+# DM_DF_PATH = 'Data/df_dm.csv'
+# M_DF_PATH = 'Data/df_m.csv'
+# W_DF_PATH = 'Data/df_w.csv'
+# CF_DF_PATH = 'Data/df_cf.csv'
+# ALL_DF_PATH = 'Data/df_all.csv'
+AGG_ALL_DF_PATH = 'Data/df_agg_all.csv'
 
 # load dataframes for each position
-cb_full_df = pd.read_csv(CB_DF_PATH, index_col=0)
-fb_full_df = pd.read_csv(FB_DF_PATH, index_col=0)
-dm_full_df = pd.read_csv(DM_DF_PATH, index_col=0)
-m_full_df = pd.read_csv(M_DF_PATH, index_col=0)
-w_full_df = pd.read_csv(W_DF_PATH, index_col=0)
-cf_full_df = pd.read_csv(CF_DF_PATH, index_col=0)
-all_df = pd.read_csv(ALL_DF_PATH, index_col=0)
+# cb_full_df = pd.read_csv(CB_DF_PATH, index_col=0)
+# fb_full_df = pd.read_csv(FB_DF_PATH, index_col=0)
+# dm_full_df = pd.read_csv(DM_DF_PATH, index_col=0)
+# m_full_df = pd.read_csv(M_DF_PATH, index_col=0)
+# w_full_df = pd.read_csv(W_DF_PATH, index_col=0)
+# cf_full_df = pd.read_csv(CF_DF_PATH, index_col=0)
+# all_df = pd.read_csv(ALL_DF_PATH, index_col=0)
+agg_all_df = pd.read_csv(AGG_ALL_DF_PATH, index_col=0)
 
-def get_all_player_details():
-    # sort df by rating in descending order
-    all_df_sorted = all_df.copy()
-    all_df_sorted = all_df_sorted.sort_values(by='rating', ascending=False)
+def get_position(player_details):
 
-    return all_df_sorted.player_details.tolist()
-
-def get_position_player_details(player_details):
-    # get player position
-    all_df_copy = all_df.copy()
-    position = all_df_copy[all_df_copy.player_details==player_details].position.tolist()[0]
-
-    # sort df by rating in descending order
-    position_df_sorted = all_df_copy[all_df_copy.position==position].sort_values(by='rating', ascending=False)
-
-    return position_df_sorted.player_details.tolist()
-
-def get_all_seasons():
-    all_df_copy = all_df.copy()
-
-    return sorted(set(all_df_copy.season), reverse=True)
-
-def get_all_leagues():
-    all_df_copy = all_df.copy()
-
-    return sorted(set(all_df_copy.league))
-
-def get_primary_positions(player_details):
-    # get player position
-    all_df_copy = all_df.copy()
-    position = all_df_copy[all_df_copy.player_details==player_details].position.tolist()[0]
-
-    return sorted(set(all_df_copy[all_df_copy.position==position].primary_position))
-
-def get_min_age():
-    # get player position
-    all_df_copy = all_df.copy()
-
-    return int(all_df_copy.age.min())
-
-def get_max_age():
-    # get player position
-    all_df_copy = all_df.copy()
-
-    return int(all_df_copy.age.max())
-
-def get_min_total_mins():
-    # get player position
-    all_df_copy = all_df.copy()
-
-    return int(all_df_copy.total_mins.min())
-
-def get_max_total_mins():
-    # get player position
-    all_df_copy = all_df.copy()
-
-    return int(all_df_copy.total_mins.max())
-
-def get_position_df(player_details):
-
-    all_df_copy = all_df.copy()
+    agg_all_df_copy = agg_all_df.copy()
 
     # get player position
     try:
-        position = all_df_copy[all_df_copy.player_details==player_details].position.tolist()[0]
+        position = agg_all_df_copy[agg_all_df_copy.player_details==player_details].position.tolist()[0]
 
-        if position == 'CB':
-            return cb_full_df
-        elif position == 'FB':
-            return fb_full_df
-        elif position == 'DM':
-            return dm_full_df
-        elif position == 'M':
-            return m_full_df
-        elif position == 'W':
-            return w_full_df
-        elif position == 'CF':
-            return cf_full_df
+        return position
 
     except:
         raise Exception('Player not in database')
+
+def get_all_player_details():
+    # sort df by rating in descending order
+    agg_all_df_sorted = agg_all_df.copy()
+    agg_all_df_sorted = agg_all_df_sorted[(agg_all_df_sorted.season=='2019') | (agg_all_df_sorted.season=='2020') | (agg_all_df_sorted.season=='2021')]
+    agg_all_df_sorted = agg_all_df_sorted.sort_values(by='rating', ascending=False)
+
+    return agg_all_df_sorted.player_details.tolist()
+
+def get_position_player_details(player_details):
+    # get player position
+    agg_all_df_copy = agg_all_df.copy()
+    position = get_position(player_details)
+
+    # sort df by rating in descending order
+    position_df_sorted = agg_all_df_copy[agg_all_df_copy.position==position]
+    position_df_sorted = position_df_sorted[(position_df_sorted.season=='2019') | (position_df_sorted.season=='2020') | (position_df_sorted.season=='2021')]
+    position_df_sorted = position_df_sorted.sort_values(by='rating', ascending=False)
+
+    return position_df_sorted.player_details.tolist()
+
+def get_all_leagues():
+    agg_all_df_copy = agg_all_df.copy()
+
+    return sorted(set(agg_all_df_copy.league))
+
+def get_primary_positions(player_details):
+    # get player position
+    agg_all_df_copy = agg_all_df.copy()
+    position = get_position(player_details)
+
+    return sorted(set(agg_all_df_copy[agg_all_df_copy.position==position].primary_position))
+
+def get_min_age():
+    agg_all_df_copy = agg_all_df.copy()
+
+    return int(agg_all_df_copy.age.min())
+
+def get_max_age():
+    agg_all_df_copy = agg_all_df.copy()
+
+    return int(agg_all_df_copy.age.max())
+
+def get_min_total_mins():
+    agg_all_df_copy = agg_all_df.copy()
+
+    return int(agg_all_df_copy.total_mins.min())
+
+def get_max_total_mins():
+    agg_all_df_copy = agg_all_df.copy()
+
+    return int(agg_all_df_copy.total_mins.max())
+
+def get_min_rating():
+    agg_all_df_copy = agg_all_df.copy()
+
+    return agg_all_df_copy.rating.min()
+
+def get_max_rating():
+    agg_all_df_copy = agg_all_df.copy()
+
+    return agg_all_df_copy.rating.max()
 
 def weighted_cosine_similarity_score(vec1, vec2, weights=None):
 
@@ -174,7 +175,7 @@ def get_scores(player_traits, others_traits, weights):
 def filter_df(df, filters):
 
     if filters['seasons'] is None:
-        seasons = df.season.unique()
+        seasons = '2021'
     else:
         seasons = filters['seasons']
 
@@ -189,36 +190,36 @@ def filter_df(df, filters):
         primary_positions = filters['primary_positions']
 
     if filters['min_age'] is None:
-        min_age = 18
+        min_age = MIN_AGE
     else:
         min_age = filters['min_age']
 
     if filters['max_age'] is None:
-        max_age = 45
+        max_age = MAX_AGE
     else:
         max_age = filters['max_age']
 
-    if filters['min_apps'] is None:
-        min_apps = 12
+    if filters['min_total_mins'] is None:
+        min_total_mins = MIN_TOTAL_MINS
     else:
-        min_apps = filters['min_apps']
+        min_total_mins = filters['min_total_mins']
 
-    if filters['max_apps'] is None:
-        max_apps = 38
+    if filters['min_rating'] is None:
+        min_rating = MIN_RATING
     else:
-        max_apps = filters['max_apps']
+        min_rating = filters['min_rating']
 
-    filtered_df = df[(df.season.isin(seasons)) &
+    filtered_df = df[(df.season==seasons) &
                      (df.league.isin(leagues)) &
                      (df.primary_position.isin(primary_positions)) &
                      (df.age>=min_age) &
                      (df.age<=max_age) &
-                     (df.apps>=min_apps) &
-                     (df.apps<=max_apps)]
+                     (df.total_mins>=min_total_mins) &
+                     (df.rating>=min_rating)]
 
     return filtered_df
 
-def get_nontraits_table_similar_players(results, df, player_details, top_n):
+def get_similar_players_df(results, df):
 
     # get all player details
     all_player_details = list(results.keys())
@@ -231,8 +232,7 @@ def get_nontraits_table_similar_players(results, df, player_details, top_n):
 
     # rearrange columns
     temp_cols = similar_players_df.columns.tolist()
-    new_cols = temp_cols[-1:] + temp_cols[1:2] + temp_cols[4:5] + temp_cols[2:3] + temp_cols[3:4] + temp_cols[6:7] + \
-               temp_cols[9:11] + temp_cols[7:8]
+    new_cols = temp_cols[1:2] + temp_cols[7:8] + temp_cols[9:10] + temp_cols[4:5] + temp_cols[6:7] + temp_cols[-1:]
     similar_players_df = similar_players_df[new_cols]
 
     # sort dataframe by similarity score
@@ -243,8 +243,12 @@ def get_nontraits_table_similar_players(results, df, player_details, top_n):
     similar_players_df.insert(0, 'Rank', rank_list)
 
     # convert similarity scores into percentage
-    similar_players_df['similarity_score'] = similar_players_df['similarity_score'].mul(100).round(2).astype(str).\
-        add('%')
+    similar_players_df['similarity_score'] = similar_players_df['similarity_score'].mul(100).round(1).astype(str).\
+        add(' %')
+
+    # round minutes played and rating
+    # similar_players_df['total_mins'] = similar_players_df['total_mins'].round()
+    # similar_players_df['rating'] = similar_players_df['rating'].round(2)
 
     # rename dataframe columns
     similar_players_df.columns = SIMILARITY_TABLE_HEADERS
@@ -275,7 +279,11 @@ def get_nontraits_table_similar_players(results, df, player_details, top_n):
     #
     # return fig
 
-def table_similar_players_1(player_details, df, top_n, traits_weights=None, filters=None):
+def table_similar_players_1(player_details, position, top_n=TOP_N, traits_weights=None, filters=None):
+
+    # get position df
+    df = agg_all_df[agg_all_df.position==position]
+    df = df.reset_index(drop=True)
 
     # get all player details
     all_player_details = df.player_details.tolist()
@@ -350,15 +358,18 @@ def table_similar_players_1(player_details, df, top_n, traits_weights=None, filt
     top_n_dict = {all_player_details[ind]: similarity_scores[ind] for ind in top_n_indices}
 
     # get list of similar players
-    similar_players = list(top_n_dict.keys())
+    similar_players_list = list(top_n_dict.keys())
 
     # create table of similar players
-    fig = get_nontraits_table_similar_players(top_n_dict, df, player_details, top_n)
+    similar_players_df = get_similar_players_df(top_n_dict, df)
 
-    return fig, similar_players
+    return similar_players_df, similar_players_list
 
-def table_similar_players_2(player_1_details, player_2_details, df, top_n, player_weights=None, traits_weights=None,
-                            filters=None):
+def table_similar_players_2(player_1_details, player_2_details, position, top_n=TOP_N, player_weights=None, traits_weights=None, filters=None):
+
+    # get position df
+    df = agg_all_df[agg_all_df.position == position]
+    df = df.reset_index(drop=True)
 
     # get all player details
     all_player_details = df.player_details.tolist()
@@ -453,14 +464,18 @@ def table_similar_players_2(player_1_details, player_2_details, df, top_n, playe
     top_n_dict = {all_player_details[ind]: similarity_scores[ind] for ind in top_n_indices}
 
     # get list of similar players
-    similar_players = list(top_n_dict.keys())
+    similar_players_list = list(top_n_dict.keys())
 
     # create table of similar players
-    fig = get_nontraits_table_similar_players(top_n_dict, df, combined_player_details, top_n)
+    similar_players_df = get_similar_players_df(top_n_dict, df)
 
-    return fig, similar_players
+    return similar_players_df, similar_players_list
 
-def rating_indicator_1(query_player_details, similar_player_details, df):
+def rating_indicators_1(query_player_details, similar_player_details, position):
+
+    # get position df
+    df = agg_all_df[agg_all_df.position == position]
+    df = df.reset_index(drop=True)
 
     # get query player rating
     query_player_rating = df[df.player_details == query_player_details].rating.tolist()[0]
@@ -474,36 +489,39 @@ def rating_indicator_1(query_player_details, similar_player_details, df):
     # rating of query player
     fig.add_trace(go.Indicator(mode='number',
                                value=query_player_rating,
-                               title=dict(font=dict(size=12), text=query_player_details),
+                               title=query_player_details,
                                domain={'row': 0, 'column': 0}))
 
     # rating of similar player
     fig.add_trace(go.Indicator(mode='number+delta',
                                value=similar_player_rating,
                                delta=dict(reference=query_player_rating),
-                               title=dict(font=dict(size=12), text=similar_player_details),
-                               domain={'row': 0, 'column': 1}))
+                               title=similar_player_details,
+                               domain={'row': 1, 'column': 0}))
 
     # card details
-    fig.update_layout(height=300,
-                      #width=500,
-                      title={'text': 'Overall Rating', 'x': 0.5},
-                      grid={'rows': 1, 'columns': 2},
+    fig.update_layout(height=800,
+                      width=1200,
+                      grid={'rows': 2, 'columns': 1},
                       template='plotly_dark',
-                      font={'size': 11}
+                      font={'size': 18}
     )
 
     # fig.show()
 
     return fig
 
-def rating_indicator_2(query_player_1_details, query_player_2_details, similar_player_details, df, player_weights=None):
+def rating_indicators_2(query_player_1_details, query_player_2_details, similar_player_details, position, player_weights=None):
 
     if player_weights is not None:
         # assert that player weights sum up to 1
         assert sum(player_weights) == 1, f'Player weights do not sum up to 1'
     else:
         player_weights = [0.5, 0.5]
+
+    # get position df
+    df = agg_all_df[agg_all_df.position == position]
+    df = df.reset_index(drop=True)
 
     # get query players ratings
     query_player_1_rating = df[df.player_details == query_player_1_details].rating.tolist()[0]
@@ -526,238 +544,43 @@ def rating_indicator_2(query_player_1_details, query_player_2_details, similar_p
     # rating of query player
     fig.add_trace(go.Indicator(mode='number',
                                value=combined_player_rating,
-                               title=dict(font=dict(size=12), text=combined_player_details),
+                               title=combined_player_details,
                                domain={'row': 0, 'column': 0}))
 
     # rating of similar player
     fig.add_trace(go.Indicator(mode='number+delta',
                                value=similar_player_rating,
                                delta=dict(reference=combined_player_rating),
-                               title=dict(font=dict(size=12), text=similar_player_details),
-                               domain={'row': 0, 'column': 1}))
+                               title=similar_player_details,
+                               domain={'row': 1, 'column': 0}))
 
     # card details
-    fig.update_layout(height=300,
-                      #width=500,
-                      title={'text': 'Overall Rating', 'x': 0.5},
-                      grid={'rows': 1, 'columns': 2},
+    fig.update_layout(height=800,
+                      width=1200,
+                      grid={'rows': 2, 'columns': 1},
                       template='plotly_dark',
-                      font={'size': 11}
+                      font={'size': 18}
     )
 
     # fig.show()
 
     return fig
 
-def traits_radar_chart_1(query_player_details, similar_player_details, df):
+def composite_traits_charts_1(query_player_details, similar_player_details, position):
+    # get position df
+    df = agg_all_df[agg_all_df.position == position]
+    df = df.reset_index(drop=True)
 
     # get values for query player traits
-    raw_trait_values_1 = df[df.player_details == query_player_details][RAW_TRAITS].values[0].tolist()
-    raw_trait_values_1 += raw_trait_values_1[:1]
     composite_trait_values_1 = df[df.player_details == query_player_details][COMPOSITE_TRAITS].values[0].tolist()
-    composite_trait_values_1 += composite_trait_values_1[:1]
+    circ_composite_trait_values_1 = composite_trait_values_1 + composite_trait_values_1[:1]
 
     # get values for similar player traits
-    raw_trait_values_2 = df[df.player_details == similar_player_details][RAW_TRAITS].values[0].tolist()
-    raw_trait_values_2 += raw_trait_values_2[:1]
     composite_trait_values_2 = df[df.player_details == similar_player_details][COMPOSITE_TRAITS].values[0].tolist()
-    composite_trait_values_2 += composite_trait_values_2[:1]
-
-    # adjust raw and composite traits lists
-    circ_raw_traits = RAW_TRAITS_DISPLAY + RAW_TRAITS_DISPLAY[:1]
-    circ_composite_traits = COMPOSITE_TRAITS_DISPLAY + COMPOSITE_TRAITS_DISPLAY[:1]
-
-    # create radar charts
-    fig = make_subplots(rows=1,
-                        cols=2,
-                        # horizontal_spacing=0.01,
-                        # vertical_spacing=0.01,
-                        specs=[[{'type': 'polar'}, {'type': 'polar'}]],
-                        subplot_titles=('Raw Traits', 'Composite Traits'))
-
-    # plot raw traits radar chart
-    fig.add_trace(go.Scatterpolar(r=raw_trait_values_1,
-                                  theta=circ_raw_traits,
-                                  fill='toself',
-                                  name=query_player_details,
-                                  marker=dict(color=DARK_BLUE_HEX)),
-                  row=1,
-                  col=1
-                  )
-    fig.add_trace(go.Scatterpolar(r=raw_trait_values_2,
-                                  theta=circ_raw_traits,
-                                  fill='toself',
-                                  name=similar_player_details,
-                                  marker=dict(color=DARK_ORANGE_HEX)),
-                  row=1,
-                  col=1
-                  )
-
-    # plot composite traits radar chart
-    fig.add_trace(go.Scatterpolar(r=composite_trait_values_1,
-                                  theta=circ_composite_traits,
-                                  fill='toself',
-                                  name=query_player_details,
-                                  marker=dict(color=DARK_BLUE_HEX),
-                                  showlegend=False),
-                  row=1,
-                  col=2
-                  )
-    fig.add_trace(go.Scatterpolar(r=composite_trait_values_2,
-                                  theta=circ_composite_traits,
-                                  fill='toself',
-                                  name=similar_player_details,
-                                  marker=dict(color=DARK_ORANGE_HEX),
-                                  showlegend=False),
-                  row=1,
-                  col=2
-                  )
-
-    # plot details
-    fig.update_layout(height=700,
-                      #width=1000,
-                      polar={'radialaxis': {'visible': True}},
-                      showlegend=True,
-                      legend=dict(x=0, y=-0.2),
-                      template='plotly_dark',
-                      font={'size': 11}
-                      )
-    # fig.update_polars(radialaxis=dict(range=[0, 10]))
-    fig.layout.annotations[0].update(y=1.1)
-    fig.layout.annotations[1].update(y=1.1)
-
-    # fig.show()
-
-    return fig
-
-def traits_radar_chart_2(query_player_1_details, query_player_2_details, similar_player_details, df,
-                         player_weights=None):
-
-    if player_weights is not None:
-        # assert that player weights sum up to 1
-        assert sum(player_weights) == 1, f'Player weights do not sum up to 1'
-    else:
-        player_weights = [0.5, 0.5]
-
-    # get values for query players traits
-    raw_trait_values_1 = df[df.player_details == query_player_1_details][RAW_TRAITS].values[0].tolist()
-    raw_trait_values_2 = df[df.player_details == query_player_2_details][RAW_TRAITS].values[0].tolist()
-    composite_trait_values_1 = df[df.player_details == query_player_1_details][COMPOSITE_TRAITS].values[0].tolist()
-    composite_trait_values_2 = df[df.player_details == query_player_2_details][COMPOSITE_TRAITS].values[0].tolist()
-
-    # combine traits for query players traits
-    raw_trait_values_combined = np.average(np.array([raw_trait_values_1, raw_trait_values_2]), axis=0,
-                                           weights=player_weights).tolist()
-    raw_trait_values_combined += raw_trait_values_combined[:1]
-    composite_trait_values_combined = np.average(np.array([composite_trait_values_1, composite_trait_values_2]), axis=0,
-                                                 weights=player_weights).tolist()
-    composite_trait_values_combined += composite_trait_values_combined[:1]
-
-    # get values for similar player traits
-    raw_trait_values_3 = df[df.player_details == similar_player_details][RAW_TRAITS].values[0].tolist()
-    raw_trait_values_3 += raw_trait_values_3[:1]
-    composite_trait_values_3 = df[df.player_details == similar_player_details][COMPOSITE_TRAITS].values[0].tolist()
-    composite_trait_values_3 += composite_trait_values_3[:1]
-
-    # combined player details
-    combined_player_details = f'{query_player_1_details} ({player_weights[0] * 100:.0f}%) + {query_player_2_details} ' \
-                              f'({player_weights[1] * 100:.0f}%)'
-
-    # adjust raw and composite traits lists
-    circ_raw_traits = RAW_TRAITS_DISPLAY + RAW_TRAITS_DISPLAY[:1]
-    circ_composite_traits = COMPOSITE_TRAITS_DISPLAY + COMPOSITE_TRAITS_DISPLAY[:1]
-
-    # create radar charts
-    fig = make_subplots(rows=1,
-                        cols=2,
-                        # horizontal_spacing=0.01,
-                        # vertical_spacing=0.01,
-                        specs=[[{'type': 'polar'}, {'type': 'polar'}]],
-                        subplot_titles=('Raw Traits', 'Composite Traits'))
-
-    # plot raw traits radar chart
-    fig.add_trace(go.Scatterpolar(r=raw_trait_values_combined,
-                                  theta=circ_raw_traits,
-                                  fill='toself',
-                                  name=combined_player_details,
-                                  marker=dict(color=DARK_BLUE_HEX)),
-                  row=1,
-                  col=1
-                  )
-    fig.add_trace(go.Scatterpolar(r=raw_trait_values_3,
-                                  theta=circ_raw_traits,
-                                  fill='toself',
-                                  name=similar_player_details,
-                                  marker=dict(color=DARK_ORANGE_HEX)),
-                  row=1,
-                  col=1
-                  )
-
-    # plot composite traits radar chart
-    fig.add_trace(go.Scatterpolar(r=composite_trait_values_combined,
-                                  theta=circ_composite_traits,
-                                  fill='toself',
-                                  name=combined_player_details,
-                                  marker=dict(color=DARK_BLUE_HEX),
-                                  showlegend=False),
-                  row=1,
-                  col=2
-                  )
-    fig.add_trace(go.Scatterpolar(r=composite_trait_values_3,
-                                  theta=circ_composite_traits,
-                                  fill='toself',
-                                  name=similar_player_details,
-                                  marker=dict(color=DARK_ORANGE_HEX),
-                                  showlegend=False),
-                  row=1,
-                  col=2
-                  )
-
-    # plot details
-    fig.update_layout(height=700,
-                      #width=1000,
-                      polar={'radialaxis': {'visible': True}},
-                      showlegend=True,
-                      legend=dict(x=0, y=-0.2),
-                      template='plotly_dark',
-                      font={'size': 11}
-                      )
-    # fig.update_polars(radialaxis=dict(range=[0, 10]))
-    fig.layout.annotations[0].update(y=1.1)
-    fig.layout.annotations[1].update(y=1.1)
-
-    # fig.show()
-
-    return fig
-
-def difference_bar_chart_1(query_player_details, similar_player_details, df):
-
-    # get values for query player traits
-    raw_trait_values_1 = df[df.player_details == query_player_details][RAW_TRAITS].values[0].tolist()
-    composite_trait_values_1 = df[df.player_details == query_player_details][COMPOSITE_TRAITS].values[0].tolist()
-
-    # get values for similar player traits
-    raw_trait_values_2 = df[df.player_details == similar_player_details][RAW_TRAITS].values[0].tolist()
-    composite_trait_values_2 = df[df.player_details == similar_player_details][COMPOSITE_TRAITS].values[0].tolist()
+    circ_composite_trait_values_2 = composite_trait_values_2 + composite_trait_values_2[:1]
 
     # get difference in traits values
-    raw_traits_diff = [raw_trait_1 - raw_trait_2 for raw_trait_1, raw_trait_2 in zip(raw_trait_values_1,
-                                                                                     raw_trait_values_2)]
-    composite_traits_diff = [composite_trait_1 - composite_trait_2 for composite_trait_1, composite_trait_2 in
-                             zip(composite_trait_values_1, composite_trait_values_2)]
-
-    # get positive and negative lists for raw traits differences
-    raw_traits_pos_diff = []
-    raw_traits_neg_diff = []
-    pos_raw_traits = []
-    neg_raw_traits = []
-    for diff, trait in zip(raw_traits_diff, RAW_TRAITS_DISPLAY):
-        if diff >= 0:
-            raw_traits_pos_diff.append(diff)
-            pos_raw_traits.append(trait)
-        else:
-            raw_traits_neg_diff.append(diff)
-            neg_raw_traits.append(trait)
+    composite_traits_diff = [composite_trait_1 - composite_trait_2 for composite_trait_1, composite_trait_2 in zip(composite_trait_values_1, composite_trait_values_2)]
 
     # get positive and negative lists for composite traits differences
     composite_traits_pos_diff = []
@@ -772,150 +595,37 @@ def difference_bar_chart_1(query_player_details, similar_player_details, df):
             composite_traits_neg_diff.append(diff)
             neg_composite_traits.append(trait)
 
-    # create traits difference bar charts
+    # adjust composite traits lists
+    circ_composite_traits = COMPOSITE_TRAITS_DISPLAY + COMPOSITE_TRAITS_DISPLAY[:1]
+
+    # create radar charts
     fig = make_subplots(rows=1,
                         cols=2,
-                        # horizontal_spacing=0.01,
-                        specs=[[{'type': 'bar'}, {'type': 'bar'}]],
-                        subplot_titles=('Raw Traits Difference', 'Composite Traits Difference'))
+                        specs=[[{'type': 'polar'}, {'type': 'bar'}]],
+                        subplot_titles=('Radar Chart', 'Difference Bar Chart'))
 
-    # plot raw traits difference bar chart
-    fig.add_trace(go.Bar(x=pos_raw_traits,
-                         y=raw_traits_pos_diff,
-                         name=f'{query_player_details} > {similar_player_details}',
-                         marker=dict(color=DARK_BLUE_HEX)),
+    # plot radar chart
+    fig.add_trace(go.Scatterpolar(r=circ_composite_trait_values_1,
+                                  theta=circ_composite_traits,
+                                  fill='toself',
+                                  name=query_player_details,
+                                  marker=dict(color=DARK_BLUE_HEX)),
                   row=1,
                   col=1
                   )
-    fig.add_trace(go.Bar(x=neg_raw_traits,
-                         y=raw_traits_neg_diff,
-                         name=f'{similar_player_details} > {query_player_details}',
-                         marker=dict(color=DARK_ORANGE_HEX)),
+    fig.add_trace(go.Scatterpolar(r=circ_composite_trait_values_2,
+                                  theta=circ_composite_traits,
+                                  fill='toself',
+                                  name=similar_player_details,
+                                  marker=dict(color=DARK_ORANGE_HEX)),
                   row=1,
                   col=1
                   )
 
-    # plot composite traits difference bar chart
+    # plot difference bar chart
     fig.add_trace(go.Bar(x=pos_composite_traits,
                          y=composite_traits_pos_diff,
-                         marker=dict(color=DARK_BLUE_HEX),
-                         showlegend=False),
-                  row=1,
-                  col=2
-                  )
-    fig.add_trace(go.Bar(x=neg_composite_traits,
-                         y=composite_traits_neg_diff,
-                         marker=dict(color=DARK_ORANGE_HEX),
-                         showlegend=False),
-                  row=1,
-                  col=2
-                  )
-
-    # plot details
-    fig.update_layout(height=700,
-                      #width=1000,
-                      showlegend=True,
-                      legend=dict(x=0, y=-0.2),
-                      template='plotly_dark',
-                      font={'size': 11}
-                      )
-    fig.update_xaxes(categoryorder='array', categoryarray=RAW_TRAITS_DISPLAY, row=1, col=1)
-    fig.update_xaxes(categoryorder='array', categoryarray=COMPOSITE_TRAITS_DISPLAY, row=1, col=2)
-    fig.update_yaxes(range=[-4, 4])
-    fig.layout.annotations[0].update(y=1.1)
-    fig.layout.annotations[1].update(y=1.1)
-
-    # fig.show()
-
-    return fig
-
-def difference_bar_chart_2(query_player_1_details, query_player_2_details, similar_player_details, df,
-                           player_weights=None):
-
-    if player_weights is not None:
-        # assert that player weights sum up to 1
-        assert sum(player_weights) == 1, f'Player weights do not sum up to 1'
-    else:
-        player_weights = [0.5, 0.5]
-
-    # get values for query players traits
-    raw_trait_values_1 = df[df.player_details == query_player_1_details][RAW_TRAITS].values[0].tolist()
-    raw_trait_values_2 = df[df.player_details == query_player_2_details][RAW_TRAITS].values[0].tolist()
-    composite_trait_values_1 = df[df.player_details == query_player_1_details][COMPOSITE_TRAITS].values[0].tolist()
-    composite_trait_values_2 = df[df.player_details == query_player_2_details][COMPOSITE_TRAITS].values[0].tolist()
-
-    # combine traits for query players traits
-    raw_trait_values_combined = np.average(np.array([raw_trait_values_1, raw_trait_values_2]), axis=0,
-                                           weights=player_weights).tolist()
-    composite_trait_values_combined = np.average(np.array([composite_trait_values_1, composite_trait_values_2]), axis=0,
-                                                 weights=player_weights).tolist()
-
-    # get values for similar player traits
-    raw_trait_values_3 = df[df.player_details == similar_player_details][RAW_TRAITS].values[0].tolist()
-    composite_trait_values_3 = df[df.player_details == similar_player_details][COMPOSITE_TRAITS].values[0].tolist()
-
-    # create traits difference in traits values
-    raw_traits_diff = [raw_trait_1 - raw_trait_2 for raw_trait_1, raw_trait_2 in zip(raw_trait_values_combined,
-                                                                                     raw_trait_values_3)]
-    composite_traits_diff = [composite_trait_1 - composite_trait_2 for composite_trait_1, composite_trait_2 in
-                             zip(composite_trait_values_combined, composite_trait_values_3)]
-
-    # get positive and negative lists for raw traits differences
-    raw_traits_pos_diff = []
-    raw_traits_neg_diff = []
-    pos_raw_traits = []
-    neg_raw_traits = []
-    for diff, trait in zip(raw_traits_diff, RAW_TRAITS_DISPLAY):
-        if diff >= 0:
-            raw_traits_pos_diff.append(diff)
-            pos_raw_traits.append(trait)
-        else:
-            raw_traits_neg_diff.append(diff)
-            neg_raw_traits.append(trait)
-
-    # get positive and negative lists for composite traits differences
-    composite_traits_pos_diff = []
-    composite_traits_neg_diff = []
-    pos_composite_traits = []
-    neg_composite_traits = []
-    for diff, trait in zip(composite_traits_diff, COMPOSITE_TRAITS_DISPLAY):
-        if diff >= 0:
-            composite_traits_pos_diff.append(diff)
-            pos_composite_traits.append(trait)
-        else:
-            composite_traits_neg_diff.append(diff)
-            neg_composite_traits.append(trait)
-
-    # combined player details
-    combined_player_details = f'{query_player_1_details} ({player_weights[0] * 100:.0f}%) + {query_player_2_details} ' \
-                              f'({player_weights[1] * 100:.0f}%)'
-
-    # create traits difference bar charts
-    fig = make_subplots(rows=1,
-                        cols=2,
-                        # horizontal_spacing=0.01,
-                        specs=[[{'type': 'bar'}, {'type': 'bar'}]],
-                        subplot_titles=('Raw Traits Difference', 'Composite Traits Difference'))
-
-    # plot raw traits difference bar chart
-    fig.add_trace(go.Bar(x=pos_raw_traits,
-                         y=raw_traits_pos_diff,
-                         name=f'{combined_player_details} > {similar_player_details}',
-                         marker=dict(color=DARK_BLUE_HEX)),
-                  row=1,
-                  col=1
-                  )
-    fig.add_trace(go.Bar(x=neg_raw_traits,
-                         y=raw_traits_neg_diff,
-                         name=f'{similar_player_details} > {combined_player_details}',
-                         marker=dict(color=DARK_ORANGE_HEX)),
-                  row=1,
-                  col=1
-                  )
-
-    # plot composite traits difference bar chart
-    fig.add_trace(go.Bar(x=pos_composite_traits,
-                         y=composite_traits_pos_diff,
+                         name=query_player_details,
                          marker=dict(color=DARK_BLUE_HEX),
                          showlegend=False),
                   row=1,
@@ -931,23 +641,341 @@ def difference_bar_chart_2(query_player_1_details, query_player_2_details, simil
                   )
 
     # plot details
-    fig.update_layout(height=700,
-                      #width=1000,
+    fig.update_layout(height=800,
+                      width=1200,
+                      margin=dict(l=90, r=90, t=90, b=10),
+                      polar={'radialaxis': {'visible': True}},
                       showlegend=True,
-                      legend=dict(x=0, y=-0.2),
+                      legend=dict(x=0, y=-0.3),
                       template='plotly_dark',
-                      font={'size': 11}
+                      font={'size': 14}
                       )
-    fig.update_xaxes(categoryorder='array', categoryarray=RAW_TRAITS_DISPLAY, row=1, col=1)
+    fig.update_polars(radialaxis=dict(range=[0, max(circ_composite_trait_values_1)]))
     fig.update_xaxes(categoryorder='array', categoryarray=COMPOSITE_TRAITS_DISPLAY, row=1, col=2)
     fig.update_yaxes(range=[-4, 4])
-    fig.layout.annotations[0].update(y=1.1)
-    fig.layout.annotations[1].update(y=1.1)
+    # fig.layout.annotations[0].update(y=1.1)
+    # fig.layout.annotations[1].update(y=1.1)
 
     # fig.show()
 
     return fig
 
+def composite_traits_charts_2(query_player_1_details, query_player_2_details, similar_player_details, position,
+                       player_weights=None):
+    if player_weights is not None:
+        # assert that player weights sum up to 1
+        assert sum(player_weights) == 1, f'Player weights do not sum up to 1'
+    else:
+        player_weights = [0.5, 0.5]
+
+    # get position df
+    df = agg_all_df[agg_all_df.position == position]
+    df = df.reset_index(drop=True)
+
+    # get values for query players traits
+    composite_trait_values_1 = df[df.player_details == query_player_1_details][COMPOSITE_TRAITS].values[0].tolist()
+    composite_trait_values_2 = df[df.player_details == query_player_2_details][COMPOSITE_TRAITS].values[0].tolist()
+
+    # combine traits for query players traits
+    composite_trait_values_combined = np.average(np.array([composite_trait_values_1, composite_trait_values_2]), axis=0,
+                                           weights=player_weights).tolist()
+    circ_composite_trait_values_combined = composite_trait_values_combined + composite_trait_values_combined[:1]
+
+    # get values for similar player traits
+    composite_trait_values_3 = df[df.player_details == similar_player_details][COMPOSITE_TRAITS].values[0].tolist()
+    circ_composite_trait_values_3 = composite_trait_values_3 + composite_trait_values_3[:1]
+
+    # create traits difference in traits values
+    composite_traits_diff = [composite_trait_1 - composite_trait_2 for composite_trait_1, composite_trait_2 in
+                       zip(composite_trait_values_combined, composite_trait_values_3)]
+
+    # get positive and negative lists for composite traits differences
+    composite_traits_pos_diff = []
+    composite_traits_neg_diff = []
+    pos_composite_traits = []
+    neg_composite_traits = []
+    for diff, trait in zip(composite_traits_diff, COMPOSITE_TRAITS_DISPLAY):
+        if diff >= 0:
+            composite_traits_pos_diff.append(diff)
+            pos_composite_traits.append(trait)
+        else:
+            composite_traits_neg_diff.append(diff)
+            neg_composite_traits.append(trait)
+
+    # adjust composite traits lists
+    circ_composite_traits = COMPOSITE_TRAITS_DISPLAY + COMPOSITE_TRAITS_DISPLAY[:1]
+
+    # combined player details
+    combined_player_details = f'{query_player_1_details} ({player_weights[0] * 100:.0f}%) + {query_player_2_details} ' \
+                              f'({player_weights[1] * 100:.0f}%)'
+
+    # create radar charts
+    fig = make_subplots(rows=1,
+                        cols=2,
+                        specs=[[{'type': 'polar'}, {'type': 'bar'}]],
+                        subplot_titles=('Radar Chart', 'Difference Bar Chart'))
+
+    # plot radar chart
+    fig.add_trace(go.Scatterpolar(r=circ_composite_trait_values_combined,
+                                  theta=circ_composite_traits,
+                                  fill='toself',
+                                  name=combined_player_details,
+                                  marker=dict(color=DARK_BLUE_HEX)),
+                  row=1,
+                  col=1
+                  )
+    fig.add_trace(go.Scatterpolar(r=circ_composite_trait_values_3,
+                                  theta=circ_composite_traits,
+                                  fill='toself',
+                                  name=similar_player_details,
+                                  marker=dict(color=DARK_ORANGE_HEX)),
+                  row=1,
+                  col=1
+                  )
+
+    # plot difference bar chart
+    fig.add_trace(go.Bar(x=pos_composite_traits,
+                         y=composite_traits_pos_diff,
+                         name=combined_player_details,
+                         marker=dict(color=DARK_BLUE_HEX),
+                         showlegend=False),
+                  row=1,
+                  col=2
+                  )
+    fig.add_trace(go.Bar(x=neg_composite_traits,
+                         y=composite_traits_neg_diff,
+                         name=similar_player_details,
+                         marker=dict(color=DARK_ORANGE_HEX),
+                         showlegend=False),
+                  row=1,
+                  col=2
+                  )
+
+    # plot details
+    fig.update_layout(height=800,
+                      width=1200,
+                      margin=dict(l=90, r=90, t=90, b=10),
+                      polar={'radialaxis': {'visible': True}},
+                      showlegend=True,
+                      legend=dict(x=0, y=-0.3),
+                      template='plotly_dark',
+                      font={'size': 14}
+                      )
+    fig.update_polars(radialaxis=dict(range=[0, max(circ_composite_trait_values_combined)]))
+    fig.update_xaxes(categoryorder='array', categoryarray=COMPOSITE_TRAITS_DISPLAY, row=1, col=2)
+    fig.update_yaxes(range=[-4, 4])
+    # fig.layout.annotations[0].update(y=1.1)
+    # fig.layout.annotations[1].update(y=1.1)
+
+    # fig.show()
+
+    return fig
+
+def raw_traits_charts_1(query_player_details, similar_player_details, position):
+    # get position df
+    df = agg_all_df[agg_all_df.position == position]
+    df = df.reset_index(drop=True)
+
+    # get values for query player traits
+    raw_trait_values_1 = df[df.player_details == query_player_details][RAW_TRAITS].values[0].tolist()
+    circ_raw_trait_values_1 = raw_trait_values_1 + raw_trait_values_1[:1]
+
+    # get values for similar player traits
+    raw_trait_values_2 = df[df.player_details == similar_player_details][RAW_TRAITS].values[0].tolist()
+    circ_raw_trait_values_2 = raw_trait_values_2 + raw_trait_values_2[:1]
+
+    # get difference in traits values
+    raw_traits_diff = [raw_trait_1 - raw_trait_2 for raw_trait_1, raw_trait_2 in
+                       zip(raw_trait_values_1, raw_trait_values_2)]
+
+    # get positive and negative lists for raw traits differences
+    raw_traits_pos_diff = []
+    raw_traits_neg_diff = []
+    pos_raw_traits = []
+    neg_raw_traits = []
+    for diff, trait in zip(raw_traits_diff, RAW_TRAITS_DISPLAY):
+        if diff >= 0:
+            raw_traits_pos_diff.append(diff)
+            pos_raw_traits.append(trait)
+        else:
+            raw_traits_neg_diff.append(diff)
+            neg_raw_traits.append(trait)
+
+    # adjust raw and composite traits lists
+    circ_raw_traits = RAW_TRAITS_DISPLAY + RAW_TRAITS_DISPLAY[:1]
+
+    # create radar charts
+    fig = make_subplots(rows=1,
+                        cols=2,
+                        specs=[[{'type': 'polar'}, {'type': 'bar'}]],
+                        subplot_titles=('Radar Chart', 'Difference Bar Chart'))
+
+    # plot radar chart
+    fig.add_trace(go.Scatterpolar(r=circ_raw_trait_values_1,
+                                  theta=circ_raw_traits,
+                                  fill='toself',
+                                  name=query_player_details,
+                                  marker=dict(color=DARK_BLUE_HEX)),
+                  row=1,
+                  col=1
+                  )
+    fig.add_trace(go.Scatterpolar(r=circ_raw_trait_values_2,
+                                  theta=circ_raw_traits,
+                                  fill='toself',
+                                  name=similar_player_details,
+                                  marker=dict(color=DARK_ORANGE_HEX)),
+                  row=1,
+                  col=1
+                  )
+
+    # plot difference bar chart
+    fig.add_trace(go.Bar(x=pos_raw_traits,
+                         y=raw_traits_pos_diff,
+                         name=query_player_details,
+                         marker=dict(color=DARK_BLUE_HEX),
+                         showlegend=False),
+                  row=1,
+                  col=2
+                  )
+    fig.add_trace(go.Bar(x=neg_raw_traits,
+                         y=raw_traits_neg_diff,
+                         name=similar_player_details,
+                         marker=dict(color=DARK_ORANGE_HEX),
+                         showlegend=False),
+                  row=1,
+                  col=2
+                  )
+
+    # plot details
+    fig.update_layout(height=800,
+                      width=1200,
+                      margin=dict(l=90, r=90, t=90, b=10),
+                      polar={'radialaxis': {'visible': True}},
+                      showlegend=True,
+                      legend=dict(x=0, y=-0.3),
+                      template='plotly_dark',
+                      font={'size': 14}
+                      )
+    fig.update_polars(radialaxis=dict(range=[0, max(circ_raw_trait_values_1)]))
+    fig.update_xaxes(categoryorder='array', categoryarray=RAW_TRAITS_DISPLAY, row=1, col=2)
+    fig.update_yaxes(range=[-4, 4])
+    # fig.layout.annotations[0].update(y=1.1)
+    # fig.layout.annotations[1].update(y=1.1)
+
+    # fig.show()
+
+    return fig
+
+def raw_traits_charts_2(query_player_1_details, query_player_2_details, similar_player_details, position,
+                       player_weights=None):
+    if player_weights is not None:
+        # assert that player weights sum up to 1
+        assert sum(player_weights) == 1, f'Player weights do not sum up to 1'
+    else:
+        player_weights = [0.5, 0.5]
+
+    # get position df
+    df = agg_all_df[agg_all_df.position == position]
+    df = df.reset_index(drop=True)
+
+    # get values for query players traits
+    raw_trait_values_1 = df[df.player_details == query_player_1_details][RAW_TRAITS].values[0].tolist()
+    raw_trait_values_2 = df[df.player_details == query_player_2_details][RAW_TRAITS].values[0].tolist()
+
+    # combine traits for query players traits
+    raw_trait_values_combined = np.average(np.array([raw_trait_values_1, raw_trait_values_2]), axis=0,
+                                           weights=player_weights).tolist()
+    circ_raw_trait_values_combined = raw_trait_values_combined + raw_trait_values_combined[:1]
+
+    # get values for similar player traits
+    raw_trait_values_3 = df[df.player_details == similar_player_details][RAW_TRAITS].values[0].tolist()
+    circ_raw_trait_values_3 = raw_trait_values_3 + raw_trait_values_3[:1]
+
+    # create traits difference in traits values
+    raw_traits_diff = [raw_trait_1 - raw_trait_2 for raw_trait_1, raw_trait_2 in
+                       zip(raw_trait_values_combined, raw_trait_values_3)]
+
+    # get positive and negative lists for raw traits differences
+    raw_traits_pos_diff = []
+    raw_traits_neg_diff = []
+    pos_raw_traits = []
+    neg_raw_traits = []
+    for diff, trait in zip(raw_traits_diff, RAW_TRAITS_DISPLAY):
+        if diff >= 0:
+            raw_traits_pos_diff.append(diff)
+            pos_raw_traits.append(trait)
+        else:
+            raw_traits_neg_diff.append(diff)
+            neg_raw_traits.append(trait)
+
+    # adjust raw and composite traits lists
+    circ_raw_traits = RAW_TRAITS_DISPLAY + RAW_TRAITS_DISPLAY[:1]
+
+    # combined player details
+    combined_player_details = f'{query_player_1_details} ({player_weights[0] * 100:.0f}%) + {query_player_2_details} ' \
+                              f'({player_weights[1] * 100:.0f}%)'
+
+    # create radar charts
+    fig = make_subplots(rows=1,
+                        cols=2,
+                        specs=[[{'type': 'polar'}, {'type': 'bar'}]],
+                        subplot_titles=('Radar Chart', 'Difference Bar Chart'))
+
+    # plot radar chart
+    fig.add_trace(go.Scatterpolar(r=circ_raw_trait_values_combined,
+                                  theta=circ_raw_traits,
+                                  fill='toself',
+                                  name=combined_player_details,
+                                  marker=dict(color=DARK_BLUE_HEX)),
+                  row=1,
+                  col=1
+                  )
+    fig.add_trace(go.Scatterpolar(r=circ_raw_trait_values_3,
+                                  theta=circ_raw_traits,
+                                  fill='toself',
+                                  name=similar_player_details,
+                                  marker=dict(color=DARK_ORANGE_HEX)),
+                  row=1,
+                  col=1
+                  )
+
+    # plot difference bar chart
+    fig.add_trace(go.Bar(x=pos_raw_traits,
+                         y=raw_traits_pos_diff,
+                         name=combined_player_details,
+                         marker=dict(color=DARK_BLUE_HEX),
+                         showlegend=False),
+                  row=1,
+                  col=2
+                  )
+    fig.add_trace(go.Bar(x=neg_raw_traits,
+                         y=raw_traits_neg_diff,
+                         name=similar_player_details,
+                         marker=dict(color=DARK_ORANGE_HEX),
+                         showlegend=False),
+                  row=1,
+                  col=2
+                  )
+
+    # plot details
+    fig.update_layout(height=800,
+                      width=1200,
+                      margin=dict(l=90, r=90, t=90, b=10),
+                      polar={'radialaxis': {'visible': True}},
+                      showlegend=True,
+                      legend=dict(x=0, y=-0.3),
+                      template='plotly_dark',
+                      font={'size': 14}
+                      )
+    fig.update_polars(radialaxis=dict(range=[0, max(circ_raw_trait_values_combined)]))
+    fig.update_xaxes(categoryorder='array', categoryarray=RAW_TRAITS_DISPLAY, row=1, col=2)
+    fig.update_yaxes(range=[-4, 4])
+    # fig.layout.annotations[0].update(y=1.1)
+    # fig.layout.annotations[1].update(y=1.1)
+
+    # fig.show()
+
+    return fig
 
 def blank_figure():
     fig = go.Figure(go.Scatter(x=[], y=[]))
