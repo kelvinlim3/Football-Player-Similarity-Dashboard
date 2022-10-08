@@ -1,50 +1,51 @@
 
 .dropdown {
-  margin-left: 0px;
-  margin-right: 0px;
-  margin-top: 0px;
-  text-align: left;
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-top: 0px;
+    text-align: left;
+    font-size: 14px;
+    border: 0px;
 }
-.dropdown-labels {
-  margin-left: 20px;
-  color: white;
-  font-weight: bold;
+.dropdown dropdown-labels {
+    margin-left: 20px;
+    color: #FFFFFF;
+    font-weight: bold;
 }
 .dropdown .Select-control{
-  background-color: #333333;
+    background-color: #333333;
+    color: #FFFFFF;
+}
+.dropdown .Select-placeholder {
+    color: #DDDDDD;
+    font-size: 16px;
 }
 .dropdown .Select-menu-outer{
-  background-color: #333333;
+    background-color: #333333;
+    color: #FFFFFF;
 }
 .dropdown .Select-value{
-  background-color: #4074B2;
-  color: white;
-  font-size: 14px;
+    background-color: #4074B2;
+    color: #FFFFFF;
+    font-size: 16px;
 }
 .dropdown .VirtualizedSelectFocusedOption {
   background-color: #4074B2;
-  color: white;
+  color: #FFFFFF;
 }
 .dropdown .VirtualizedSelectOption {
-  font-size: 14px;
+    color: #FFFFFF;
+    font-size: 14px;
 }
 
+
 .input {
-  margin-left: 0px;
-  margin-right: 0px;
-  margin-top: 0px;
-  text-align: left;
-}
-.input .Select-control{
-  background-color: #333333;
-}
-.input .Select-menu-outer{
-  background-color: #333333;
-}
-.input .Select-value{
-  background-color: #4074B2;
-  color: white;
-  font-size: 14px;
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-top: 0px;
+    text-align: center;
+    background-color: #333333;
+    color: #FFFFFF;
 }
 
 
@@ -82,4 +83,8 @@
 .range_slider .rc-slider-dot-active {
   background-color: #4074B2;
   border: 0;
+}
+
+#submit_button {
+    font-size: 20px;
 }

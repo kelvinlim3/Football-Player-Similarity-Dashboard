@@ -1,4 +1,4 @@
-# Script containing functions necessary for 'dashboard.py'.
+# Script containing functions necessary for 'launch_dashboard.py'.
 
 # import packages
 from plotly.subplots import make_subplots
@@ -17,43 +17,28 @@ RAW_TRAITS_DISPLAY = ['Goals', 'Shots', 'Conversion', 'Positioning', 'Assists', 
 COMPOSITE_TRAITS_DISPLAY = ['Scoring', 'Creating', 'Passing', 'Defending']
 SIMILARITY_TABLE_HEADERS = ['RANK', 'PLAYER NAME', 'NATIONALITY', 'AGE', 'TEAM', 'PRIMARY POSITION', 'SIMILARITY SCORE']
 TOP_N = 20
-MIN_AGE = 17 #similarity.get_min_age()
-MAX_AGE = 45 # similarity.get_max_age()
-MIN_TOTAL_MINS = 720 # similarity.get_min_total_mins()
-MAX_TOTAL_MINS = 3420 # similarity.get_max_total_mins()
-MIN_RATING = 0.6 # similarity.get_min_rating()
-MAX_RATING = 4.9 # similarity.get_max_rating()
+MIN_AGE = 17
+MAX_AGE = 45
+MIN_TOTAL_MINS = 720
+MAX_TOTAL_MINS = 3420
+MIN_RATING = 0.6
+MAX_RATING = 4.9
 DARK_BLUE_HEX = '#4074B2'
-LIGHT_BLUE_HEX = '#ADCDF0'
 DARK_ORANGE_HEX = '#E77052'
 
 # paths to dataframe csv files
-# CB_DF_PATH = 'Data/df_cb.csv'
-# FB_DF_PATH = 'Data/df_fb.csv'
-# DM_DF_PATH = 'Data/df_dm.csv'
-# M_DF_PATH = 'Data/df_m.csv'
-# W_DF_PATH = 'Data/df_w.csv'
-# CF_DF_PATH = 'Data/df_cf.csv'
-# ALL_DF_PATH = 'Data/df_all.csv'
-AGG_ALL_DF_PATH = 'Data/df_agg_all.csv'
+DF_FULL_PATH = 'Data/df_full.csv'
 
 # load dataframes for each position
-# cb_full_df = pd.read_csv(CB_DF_PATH, index_col=0)
-# fb_full_df = pd.read_csv(FB_DF_PATH, index_col=0)
-# dm_full_df = pd.read_csv(DM_DF_PATH, index_col=0)
-# m_full_df = pd.read_csv(M_DF_PATH, index_col=0)
-# w_full_df = pd.read_csv(W_DF_PATH, index_col=0)
-# cf_full_df = pd.read_csv(CF_DF_PATH, index_col=0)
-# all_df = pd.read_csv(ALL_DF_PATH, index_col=0)
-agg_all_df = pd.read_csv(AGG_ALL_DF_PATH, index_col=0)
+df_full = pd.read_csv(DF_FULL_PATH, index_col=0)
 
 def get_position(player_details):
 
-    agg_all_df_copy = agg_all_df.copy()
+    df_full_copy = df_full.copy()
 
     # get player position
     try:
-        position = agg_all_df_copy[agg_all_df_copy.player_details==player_details].position.tolist()[0]
+        position = df_full_copy[df_full_copy.player_details==player_details].position.tolist()[0]
 
         return position
 
@@ -61,66 +46,85 @@ def get_position(player_details):
         raise Exception('Player not in database')
 
 def get_all_player_details():
-    # sort df by rating in descending order
-    agg_all_df_sorted = agg_all_df.copy()
-    agg_all_df_sorted = agg_all_df_sorted[(agg_all_df_sorted.season=='2019') | (agg_all_df_sorted.season=='2020') | (agg_all_df_sorted.season=='2021')]
-    agg_all_df_sorted = agg_all_df_sorted.sort_values(by='rating', ascending=False)
 
-    return agg_all_df_sorted.player_details.tolist()
+    # sort df by rating in descending order
+    df_full_sorted = df_full.copy()
+    df_full_sorted = df_full_sorted[(df_full_sorted.season=='2019') | (df_full_sorted.season=='2020') | (df_full_sorted.season=='2021')]
+    df_full_sorted = df_full_sorted.sort_values(by='rating', ascending=False)
+
+    return df_full_sorted.player_details.tolist()
 
 def get_position_player_details(player_details):
+
     # get player position
-    agg_all_df_copy = agg_all_df.copy()
+    df_full_copy = df_full.copy()
     position = get_position(player_details)
 
     # sort df by rating in descending order
-    position_df_sorted = agg_all_df_copy[agg_all_df_copy.position==position]
+    position_df_sorted = df_full_copy[df_full_copy.position==position]
     position_df_sorted = position_df_sorted[(position_df_sorted.season=='2019') | (position_df_sorted.season=='2020') | (position_df_sorted.season=='2021')]
     position_df_sorted = position_df_sorted.sort_values(by='rating', ascending=False)
 
     return position_df_sorted.player_details.tolist()
 
 def get_all_leagues():
-    agg_all_df_copy = agg_all_df.copy()
 
-    return sorted(set(agg_all_df_copy.league))
+    df_full_copy = df_full.copy()
+
+    return sorted(set(df_full_copy.league))
 
 def get_primary_positions(player_details):
+
     # get player position
-    agg_all_df_copy = agg_all_df.copy()
+    df_full_copy = df_full.copy()
     position = get_position(player_details)
 
-    return sorted(set(agg_all_df_copy[agg_all_df_copy.position==position].primary_position))
+    return sorted(set(df_full_copy[df_full_copy.position==position].primary_position))
 
 def get_min_age():
-    agg_all_df_copy = agg_all_df.copy()
 
-    return int(agg_all_df_copy.age.min())
+    df_full_copy = df_full.copy()
+
+    return int(df_full_copy.age.min())
 
 def get_max_age():
-    agg_all_df_copy = agg_all_df.copy()
 
-    return int(agg_all_df_copy.age.max())
+    df_full_copy = df_full.copy()
+
+    return int(df_full_copy.age.max())
 
 def get_min_total_mins():
-    agg_all_df_copy = agg_all_df.copy()
 
-    return int(agg_all_df_copy.total_mins.min())
+    df_full_copy = df_full.copy()
+
+    return int(df_full_copy.total_mins.min())
 
 def get_max_total_mins():
-    agg_all_df_copy = agg_all_df.copy()
 
-    return int(agg_all_df_copy.total_mins.max())
+    df_full_copy = df_full.copy()
+
+    return int(df_full_copy.total_mins.max())
 
 def get_min_rating():
-    agg_all_df_copy = agg_all_df.copy()
 
-    return agg_all_df_copy.rating.min()
+    df_full_copy = df_full.copy()
+
+    return df_full_copy.rating.min()
 
 def get_max_rating():
-    agg_all_df_copy = agg_all_df.copy()
 
-    return agg_all_df_copy.rating.max()
+    df_full_copy = df_full.copy()
+
+    return df_full_copy.rating.max()
+
+def blank_figure():
+
+    fig = go.Figure(go.Scatter(x=[], y=[]))
+    fig.update_layout(template='plotly_dark')
+    fig.update_xaxes(showgrid=False, showticklabels=False, zeroline=False)
+    fig.update_yaxes(showgrid=False, showticklabels=False, zeroline=False)
+
+    return fig
 
 def weighted_cosine_similarity_score(vec1, vec2, weights=None):
 
@@ -209,6 +213,7 @@ def filter_df(df, filters):
     else:
         min_rating = filters['min_rating']
 
+    # get filtered df
     filtered_df = df[(df.season==seasons) &
                      (df.league.isin(leagues)) &
                      (df.primary_position.isin(primary_positions)) &
@@ -243,46 +248,17 @@ def get_similar_players_df(results, df):
     similar_players_df.insert(0, 'Rank', rank_list)
 
     # convert similarity scores into percentage
-    similar_players_df['similarity_score'] = similar_players_df['similarity_score'].mul(100).round(1).astype(str).\
-        add(' %')
-
-    # round minutes played and rating
-    # similar_players_df['total_mins'] = similar_players_df['total_mins'].round()
-    # similar_players_df['rating'] = similar_players_df['rating'].round(2)
+    similar_players_df['similarity_score'] = similar_players_df['similarity_score'].mul(100).round(1).astype(str).add(' %')
 
     # rename dataframe columns
     similar_players_df.columns = SIMILARITY_TABLE_HEADERS
 
     return similar_players_df
-    # # create table of similar players
-    # fig = go.Figure(data=[go.Table(header=dict(values=SIMILARITY_TABLE_HEADERS,
-    #                                            fill_color=DARK_BLUE_HEX,
-    #                                            align='center',
-    #                                            font=dict(color='white', size=12)),
-    #                                cells=dict(
-    #                                    values=[similar_players_df[header] for header in SIMILARITY_TABLE_HEADERS],
-    #                                    fill_color=LIGHT_BLUE_HEX,
-    #                                    align=['left', 'center', 'center', 'left', 'left', 'left', 'left', 'left',
-    #                                           'left', 'center', 'center'],
-    #                                    font=dict(color='white', size=12)))
-    #                       ])
-    #
-    # # table details
-    # fig.update_layout(# height=500,
-    #                   # width=1000,
-    #                   title=f'Top {top_n} similar players to {player_details}',
-    #                   template='plotly_dark'
-    #                   )
-    # fig.layout.title.update(y=0.85)
-    #
-    # # fig.show()
-    #
-    # return fig
 
-def table_similar_players_1(player_details, position, top_n=TOP_N, traits_weights=None, filters=None):
+def similar_players_df_1(player_details, position, top_n=TOP_N, traits_weights=None, filters=None):
 
     # get position df
-    df = agg_all_df[agg_all_df.position==position]
+    df = df_full[df_full.position==position]
     df = df.reset_index(drop=True)
 
     # get all player details
@@ -357,18 +333,15 @@ def table_similar_players_1(player_details, position, top_n=TOP_N, traits_weight
     # dictionary of player details as keys and similarity scores as values
     top_n_dict = {all_player_details[ind]: similarity_scores[ind] for ind in top_n_indices}
 
-    # get list of similar players
-    similar_players_list = list(top_n_dict.keys())
-
     # create table of similar players
     similar_players_df = get_similar_players_df(top_n_dict, df)
 
-    return similar_players_df, similar_players_list
+    return similar_players_df, top_n_dict
 
-def table_similar_players_2(player_1_details, player_2_details, position, top_n=TOP_N, player_weights=None, traits_weights=None, filters=None):
+def similar_players_df_2(player_1_details, player_2_details, position, top_n=TOP_N, player_weights=None, traits_weights=None, filters=None):
 
     # get position df
-    df = agg_all_df[agg_all_df.position == position]
+    df = df_full[df_full.position == position]
     df = df.reset_index(drop=True)
 
     # get all player details
@@ -463,18 +436,15 @@ def table_similar_players_2(player_1_details, player_2_details, position, top_n=
     # dictionary of player details as keys and similarity scores as values
     top_n_dict = {all_player_details[ind]: similarity_scores[ind] for ind in top_n_indices}
 
-    # get list of similar players
-    similar_players_list = list(top_n_dict.keys())
-
     # create table of similar players
     similar_players_df = get_similar_players_df(top_n_dict, df)
 
-    return similar_players_df, similar_players_list
+    return similar_players_df, top_n_dict
 
 def rating_indicators_1(query_player_details, similar_player_details, position):
 
     # get position df
-    df = agg_all_df[agg_all_df.position == position]
+    df = df_full[df_full.position == position]
     df = df.reset_index(drop=True)
 
     # get query player rating
@@ -507,8 +477,6 @@ def rating_indicators_1(query_player_details, similar_player_details, position):
                       font={'size': 18}
     )
 
-    # fig.show()
-
     return fig
 
 def rating_indicators_2(query_player_1_details, query_player_2_details, similar_player_details, position, player_weights=None):
@@ -520,7 +488,7 @@ def rating_indicators_2(query_player_1_details, query_player_2_details, similar_
         player_weights = [0.5, 0.5]
 
     # get position df
-    df = agg_all_df[agg_all_df.position == position]
+    df = df_full[df_full.position == position]
     df = df.reset_index(drop=True)
 
     # get query players ratings
@@ -562,13 +530,12 @@ def rating_indicators_2(query_player_1_details, query_player_2_details, similar_
                       font={'size': 18}
     )
 
-    # fig.show()
-
     return fig
 
 def composite_traits_charts_1(query_player_details, similar_player_details, position):
+
     # get position df
-    df = agg_all_df[agg_all_df.position == position]
+    df = df_full[df_full.position == position]
     df = df.reset_index(drop=True)
 
     # get values for query player traits
@@ -650,18 +617,14 @@ def composite_traits_charts_1(query_player_details, similar_player_details, posi
                       template='plotly_dark',
                       font={'size': 14}
                       )
-    fig.update_polars(radialaxis=dict(range=[0, max(circ_composite_trait_values_1)]))
+    # fig.update_polars(radialaxis=dict(range=[0, max(circ_composite_trait_values_1)]))
     fig.update_xaxes(categoryorder='array', categoryarray=COMPOSITE_TRAITS_DISPLAY, row=1, col=2)
     fig.update_yaxes(range=[-4, 4])
-    # fig.layout.annotations[0].update(y=1.1)
-    # fig.layout.annotations[1].update(y=1.1)
-
-    # fig.show()
 
     return fig
 
-def composite_traits_charts_2(query_player_1_details, query_player_2_details, similar_player_details, position,
-                       player_weights=None):
+def composite_traits_charts_2(query_player_1_details, query_player_2_details, similar_player_details, position, player_weights=None):
+
     if player_weights is not None:
         # assert that player weights sum up to 1
         assert sum(player_weights) == 1, f'Player weights do not sum up to 1'
@@ -669,7 +632,7 @@ def composite_traits_charts_2(query_player_1_details, query_player_2_details, si
         player_weights = [0.5, 0.5]
 
     # get position df
-    df = agg_all_df[agg_all_df.position == position]
+    df = df_full[df_full.position == position]
     df = df.reset_index(drop=True)
 
     # get values for query players traits
@@ -761,19 +724,16 @@ def composite_traits_charts_2(query_player_1_details, query_player_2_details, si
                       template='plotly_dark',
                       font={'size': 14}
                       )
-    fig.update_polars(radialaxis=dict(range=[0, max(circ_composite_trait_values_combined)]))
+    # fig.update_polars(radialaxis=dict(range=[0, max(circ_composite_trait_values_combined)]))
     fig.update_xaxes(categoryorder='array', categoryarray=COMPOSITE_TRAITS_DISPLAY, row=1, col=2)
     fig.update_yaxes(range=[-4, 4])
-    # fig.layout.annotations[0].update(y=1.1)
-    # fig.layout.annotations[1].update(y=1.1)
-
-    # fig.show()
 
     return fig
 
 def raw_traits_charts_1(query_player_details, similar_player_details, position):
+
     # get position df
-    df = agg_all_df[agg_all_df.position == position]
+    df = df_full[df_full.position == position]
     df = df.reset_index(drop=True)
 
     # get values for query player traits
@@ -856,18 +816,14 @@ def raw_traits_charts_1(query_player_details, similar_player_details, position):
                       template='plotly_dark',
                       font={'size': 14}
                       )
-    fig.update_polars(radialaxis=dict(range=[0, max(circ_raw_trait_values_1)]))
+    # fig.update_polars(radialaxis=dict(range=[0, max(circ_raw_trait_values_1)]))
     fig.update_xaxes(categoryorder='array', categoryarray=RAW_TRAITS_DISPLAY, row=1, col=2)
     fig.update_yaxes(range=[-4, 4])
-    # fig.layout.annotations[0].update(y=1.1)
-    # fig.layout.annotations[1].update(y=1.1)
-
-    # fig.show()
 
     return fig
 
-def raw_traits_charts_2(query_player_1_details, query_player_2_details, similar_player_details, position,
-                       player_weights=None):
+def raw_traits_charts_2(query_player_1_details, query_player_2_details, similar_player_details, position, player_weights=None):
+
     if player_weights is not None:
         # assert that player weights sum up to 1
         assert sum(player_weights) == 1, f'Player weights do not sum up to 1'
@@ -875,7 +831,7 @@ def raw_traits_charts_2(query_player_1_details, query_player_2_details, similar_
         player_weights = [0.5, 0.5]
 
     # get position df
-    df = agg_all_df[agg_all_df.position == position]
+    df = df_full[df_full.position == position]
     df = df.reset_index(drop=True)
 
     # get values for query players traits
@@ -970,17 +926,31 @@ def raw_traits_charts_2(query_player_1_details, query_player_2_details, similar_
     fig.update_polars(radialaxis=dict(range=[0, max(circ_raw_trait_values_combined)]))
     fig.update_xaxes(categoryorder='array', categoryarray=RAW_TRAITS_DISPLAY, row=1, col=2)
     fig.update_yaxes(range=[-4, 4])
-    # fig.layout.annotations[0].update(y=1.1)
-    # fig.layout.annotations[1].update(y=1.1)
-
-    # fig.show()
 
     return fig
 
-def blank_figure():
-    fig = go.Figure(go.Scatter(x=[], y=[]))
-    fig.update_layout(template='plotly_dark')
-    fig.update_xaxes(showgrid=False, showticklabels=False, zeroline=False)
-    fig.update_yaxes(showgrid=False, showticklabels=False, zeroline=False)
-
-    return fig
+# if __name__ == '__main__':
+#     top_score = 0
+#     top_query_player = ''
+#     top_similar_player = ''
+#     for i, row in df_full.iterrows():
+#         if row['season'] == '2021':
+#             player_details = row['player_details']
+#             position = get_position(player_details)
+#             top_n = 1
+#             traits_weights = None
+#             filters = {'seasons': '2021',
+#                        'leagues': None,
+#                        'primary_positions': None,
+#                        'min_age': None,
+#                        'max_age': None,
+#                        'min_total_mins': None,
+#                        'min_rating': None}
+#             df, top_n_dict = similar_players_df_1(player_details, position, top_n, traits_weights, filters)
+#             score = list(top_n_dict.values())[0]
+#             if score > top_score:
+#                 top_score = score
+#                 top_query_player = player_details
+#                 top_similar_player = list(top_n_dict.keys())[0]
+#
+#     print(f'Top score: {top_score:.2f} between {top_query_player} and {top_similar_player}')

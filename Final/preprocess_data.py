@@ -1,4 +1,4 @@
-# Run with `python preprocessing.py` to preprocess csv files into dataframes.
+# Run with `python preprocess_data.py` to preprocess csv files into dataframes.
 
 # import packages
 import pandas as pd
@@ -12,105 +12,100 @@ M_DATA_PATH = 'Data/data_m.csv'
 W_DATA_PATH = 'Data/data_w.csv'
 CF_DATA_PATH = 'Data/data_cf.csv'
 
-# load dataframes for each position
-cb_full_df = pd.read_csv(CB_DATA_PATH)
-fb_full_df = pd.read_csv(FB_DATA_PATH)
-dm_full_df = pd.read_csv(DM_DATA_PATH)
-m_full_df = pd.read_csv(M_DATA_PATH)
-w_full_df = pd.read_csv(W_DATA_PATH)
-cf_full_df = pd.read_csv(CF_DATA_PATH)
+def preprocess():
 
-if __name__ == '__main__':
+    # load dataframes for each position
+    cb_df = pd.read_csv(CB_DATA_PATH)
+    fb_df = pd.read_csv(FB_DATA_PATH)
+    dm_df = pd.read_csv(DM_DATA_PATH)
+    m_df = pd.read_csv(M_DATA_PATH)
+    w_df = pd.read_csv(W_DATA_PATH)
+    cf_df = pd.read_csv(CF_DATA_PATH)
+
     # drop ord column
-    cb_full_df = cb_full_df.drop(columns='Ord')
-    fb_full_df = fb_full_df.drop(columns='Ord')
-    dm_full_df = dm_full_df.drop(columns='Ord')
-    m_full_df = m_full_df.drop(columns='Ord')
-    w_full_df = w_full_df.drop(columns='Ord')
-    cf_full_df = cf_full_df.drop(columns='Ord')
+    cb_df = cb_df.drop(columns='Ord')
+    fb_df = fb_df.drop(columns='Ord')
+    dm_df = dm_df.drop(columns='Ord')
+    m_df = m_df.drop(columns='Ord')
+    w_df = w_df.drop(columns='Ord')
+    cf_df = cf_df.drop(columns='Ord')
 
     # replace spaces with underscores and lowercase column names
-    cb_full_df.columns = [col.replace(' ', '_').lower() for col in cb_full_df.columns]
-    fb_full_df.columns = [col.replace(' ', '_').lower() for col in fb_full_df.columns]
-    dm_full_df.columns = [col.replace(' ', '_').lower() for col in dm_full_df.columns]
-    m_full_df.columns = [col.replace(' ', '_').lower() for col in m_full_df.columns]
-    w_full_df.columns = [col.replace(' ', '_').lower() for col in w_full_df.columns]
-    cf_full_df.columns = [col.replace(' ', '_').lower() for col in cf_full_df.columns]
+    cb_df.columns = [col.replace(' ', '_').lower() for col in cb_df.columns]
+    fb_df.columns = [col.replace(' ', '_').lower() for col in fb_df.columns]
+    dm_df.columns = [col.replace(' ', '_').lower() for col in dm_df.columns]
+    m_df.columns = [col.replace(' ', '_').lower() for col in m_df.columns]
+    w_df.columns = [col.replace(' ', '_').lower() for col in w_df.columns]
+    cf_df.columns = [col.replace(' ', '_').lower() for col in cf_df.columns]
 
     # rename `player_name` column to `player_details`
-    cb_full_df = cb_full_df.rename(columns={'player_name': 'player_details'})
-    fb_full_df = fb_full_df.rename(columns={'player_name': 'player_details'})
-    dm_full_df = dm_full_df.rename(columns={'player_name': 'player_details'})
-    m_full_df = m_full_df.rename(columns={'player_name': 'player_details'})
-    w_full_df = w_full_df.rename(columns={'player_name': 'player_details'})
-    cf_full_df = cf_full_df.rename(columns={'player_name': 'player_details'})
+    cb_df = cb_df.rename(columns={'player_name': 'player_details'})
+    fb_df = fb_df.rename(columns={'player_name': 'player_details'})
+    dm_df = dm_df.rename(columns={'player_name': 'player_details'})
+    m_df = m_df.rename(columns={'player_name': 'player_details'})
+    w_df = w_df.rename(columns={'player_name': 'player_details'})
+    cf_df = cf_df.rename(columns={'player_name': 'player_details'})
 
     # add a column `player_name`
-    cb_player_names = [row.player_details.replace(row.team_id, '').replace(str(row.season), '').strip() for index, row
-                       in cb_full_df.iterrows()]
-    cb_full_df.insert(1, 'player_name', cb_player_names)
-    fb_player_names = [row.player_details.replace(row.team_id, '').replace(str(row.season), '').strip() for index, row
-                       in fb_full_df.iterrows()]
-    fb_full_df.insert(1, 'player_name', fb_player_names)
-    dm_player_names = [row.player_details.replace(row.team_id, '').replace(str(row.season), '').strip() for index, row
-                       in dm_full_df.iterrows()]
-    dm_full_df.insert(1, 'player_name', dm_player_names)
-    m_player_names = [row.player_details.replace(row.team_id, '').replace(str(row.season), '').strip() for index, row in
-                      m_full_df.iterrows()]
-    m_full_df.insert(1, 'player_name', m_player_names)
-    w_player_names = [row.player_details.replace(row.team_id, '').replace(str(row.season), '').strip() for index, row in
-                      w_full_df.iterrows()]
-    w_full_df.insert(1, 'player_name', w_player_names)
-    cf_player_names = [row.player_details.replace(row.team_id, '').replace(str(row.season), '').strip() for index, row
-                       in cf_full_df.iterrows()]
-    cf_full_df.insert(1, 'player_name', cf_player_names)
+    cb_player_names = [row.player_details.replace(row.team_id, '').replace(str(row.season), '').strip() for index, row in cb_df.iterrows()]
+    cb_df.insert(1, 'player_name', cb_player_names)
+    fb_player_names = [row.player_details.replace(row.team_id, '').replace(str(row.season), '').strip() for index, row in fb_df.iterrows()]
+    fb_df.insert(1, 'player_name', fb_player_names)
+    dm_player_names = [row.player_details.replace(row.team_id, '').replace(str(row.season), '').strip() for index, row in dm_df.iterrows()]
+    dm_df.insert(1, 'player_name', dm_player_names)
+    m_player_names = [row.player_details.replace(row.team_id, '').replace(str(row.season), '').strip() for index, row in m_df.iterrows()]
+    m_df.insert(1, 'player_name', m_player_names)
+    w_player_names = [row.player_details.replace(row.team_id, '').replace(str(row.season), '').strip() for index, row in w_df.iterrows()]
+    w_df.insert(1, 'player_name', w_player_names)
+    cf_player_names = [row.player_details.replace(row.team_id, '').replace(str(row.season), '').strip() for index, row in cf_df.iterrows()]
+    cf_df.insert(1, 'player_name', cf_player_names)
 
     # add a column 'total_mins'
-    cb_full_df.insert(10, 'total_mins', cb_full_df.apps * cb_full_df.mins)
-    fb_full_df.insert(10, 'total_mins', fb_full_df.apps * fb_full_df.mins)
-    dm_full_df.insert(10, 'total_mins', dm_full_df.apps * dm_full_df.mins)
-    m_full_df.insert(10, 'total_mins', m_full_df.apps * m_full_df.mins)
-    w_full_df.insert(10, 'total_mins', w_full_df.apps * w_full_df.mins)
-    cf_full_df.insert(10, 'total_mins', cf_full_df.apps * cf_full_df.mins)
+    cb_df.insert(10, 'total_mins', cb_df.apps * cb_df.mins)
+    fb_df.insert(10, 'total_mins', fb_df.apps * fb_df.mins)
+    dm_df.insert(10, 'total_mins', dm_df.apps * dm_df.mins)
+    m_df.insert(10, 'total_mins', m_df.apps * m_df.mins)
+    w_df.insert(10, 'total_mins', w_df.apps * w_df.mins)
+    cf_df.insert(10, 'total_mins', cf_df.apps * cf_df.mins)
 
     # add a column 'age'
-    cb_full_df.insert(8, 'age', date.today().year - cb_full_df.dob)
-    fb_full_df.insert(8, 'age', date.today().year - fb_full_df.dob)
-    dm_full_df.insert(8, 'age', date.today().year - dm_full_df.dob)
-    m_full_df.insert(8, 'age', date.today().year - m_full_df.dob)
-    w_full_df.insert(8, 'age', date.today().year - w_full_df.dob)
-    cf_full_df.insert(8, 'age', date.today().year - cf_full_df.dob)
+    cb_df.insert(8, 'age', date.today().year - cb_df.dob)
+    fb_df.insert(8, 'age', date.today().year - fb_df.dob)
+    dm_df.insert(8, 'age', date.today().year - dm_df.dob)
+    m_df.insert(8, 'age', date.today().year - m_df.dob)
+    w_df.insert(8, 'age', date.today().year - w_df.dob)
+    cf_df.insert(8, 'age', date.today().year - cf_df.dob)
 
     # add a column 'position'
-    cb_full_df.insert(5, 'position', 'CB')
-    fb_full_df.insert(5, 'position', 'FB')
-    dm_full_df.insert(5, 'position', 'DM')
-    m_full_df.insert(5, 'position', 'M')
-    w_full_df.insert(5, 'position', 'W')
-    cf_full_df.insert(5, 'position', 'CF')
+    cb_df.insert(5, 'position', 'CB')
+    fb_df.insert(5, 'position', 'FB')
+    dm_df.insert(5, 'position', 'DM')
+    m_df.insert(5, 'position', 'M')
+    w_df.insert(5, 'position', 'W')
+    cf_df.insert(5, 'position', 'CF')
 
     # convert season from int to str
-    cb_full_df.season = cb_full_df.season.map(str)
-    fb_full_df.season = fb_full_df.season.map(str)
-    dm_full_df.season = dm_full_df.season.map(str)
-    m_full_df.season = m_full_df.season.map(str)
-    w_full_df.season = w_full_df.season.map(str)
-    cf_full_df.season = cf_full_df.season.map(str)
+    cb_df.season = cb_df.season.map(str)
+    fb_df.season = fb_df.season.map(str)
+    dm_df.season = dm_df.season.map(str)
+    m_df.season = m_df.season.map(str)
+    w_df.season = w_df.season.map(str)
+    cf_df.season = cf_df.season.map(str)
 
     # create a full dataframe for all positions
-    all_dfs = [cb_full_df, fb_full_df, dm_full_df, m_full_df, w_full_df, cf_full_df]
+    all_dfs = [cb_df, fb_df, dm_df, m_df, w_df, cf_df]
     all_df = pd.concat(all_dfs)
 
-    # aggregate full df
+    #  combine statistics for players with 2 rows for one season into 1 row and
+    # combine statistics into periods 2021, 2020-2021, 2019-2021 with weights on recent seasons
     SEASONS = ['2019', '2020', '2021']
-    agg_all_df = pd.DataFrame(
-        {'player_details': [], 'player_name': [], 'season': [], 'league': [], 'team': [], 'position': [],
-         'primary_position': [], 'nationality': [], 'dob': [], 'age': [],
-         'apps': [], 'mins': [], 'total_mins': [], 'rating': [], 'scoring': [], 'creating': [], 'passing': [],
-         'defending': [], 'goals': [], 'shots': [], 'conversion': [],
-         'positioning': [], 'assists': [], 'crossing': [], 'dribbling': [], 'carries': [], 'involvement': [],
-         'accuracy': [], 'intent': [], 'receiving': [], 'aerial': [],
-         'on_ball': [], 'off_ball': [], 'fouls': []})
+    agg_full_df = pd.DataFrame({'player_details': [], 'player_name': [], 'season': [], 'league': [], 'team': [], 'position': [], 'primary_position': [],
+                                'nationality': [], 'dob': [], 'age': [], 'apps': [], 'mins': [], 'total_mins': [],
+                                'rating': [], 'scoring': [], 'creating': [], 'passing': [], 'defending': [],
+                                'goals': [], 'shots': [], 'conversion': [], 'positioning': [],
+                                'assists': [], 'crossing': [], 'dribbling': [], 'carries': [],
+                                'involvement': [], 'accuracy': [], 'intent': [], 'receiving': [],
+                                'aerial': [], 'on_ball': [], 'off_ball': [], 'fouls': []})
     unique_ids = ['player_name', 'position', 'primary_position', 'nationality', 'dob', 'age']
     uniques = []
 
@@ -127,48 +122,20 @@ if __name__ == '__main__':
             age = row.age
 
             player_df = all_df[(all_df.player_name == player_name) &
-                                (all_df.position == position) &
-                                (all_df.primary_position == primary_position) &
-                                (all_df.nationality == nationality) &
-                                (all_df.dob == dob) &
-                                (all_df.age == age)]
+                               (all_df.position == position) &
+                               (all_df.primary_position == primary_position) &
+                               (all_df.nationality == nationality) &
+                               (all_df.dob == dob) &
+                               (all_df.age == age)]
 
             # dict with all aggregated values for 2019, 2020, 2021, 2020-2021, 2019-2021, if present
-            seasons_combined_dict = {'player_details': [],  #
-                                     'player_name': [],  #
-                                     'season': [],
-                                     'league': [],  #
-                                     'team': [],  #
-                                     'position': [],  #
-                                     'primary_position': [],  #
-                                     'nationality': [],  #
-                                     'dob': [],  #
-                                     'age': [],  #
-                                     'apps': [],  #
-                                     'mins': [],  #
-                                     'total_mins': [],  #
-                                     'rating': [],  #
-                                     'scoring': [],  #
-                                     'creating': [],  #
-                                     'passing': [],  #
-                                     'defending': [],  #
-                                     'goals': [],  #
-                                     'shots': [],  #
-                                     'conversion': [],  #
-                                     'positioning': [],  #
-                                     'assists': [],  #
-                                     'crossing': [],  #
-                                     'dribbling': [],  #
-                                     'carries': [],  #
-                                     'involvement': [],  #
-                                     'accuracy': [],  #
-                                     'intent': [],  #
-                                     'receiving': [],  #
-                                     'aerial': [],  #
-                                     'on_ball': [],  #
-                                     'off_ball': [],  #
-                                     'fouls': [],  #
-                                     }
+            seasons_combined_dict = {'player_details': [], 'player_name': [], 'season': [], 'league': [], 'team': [], 'position': [], 'primary_position': [],
+                                     'nationality': [], 'dob': [], 'age': [], 'apps': [], 'mins': [], 'total_mins': [],
+                                     'rating': [], 'scoring': [], 'creating': [], 'passing': [], 'defending': [],
+                                     'goals': [], 'shots': [], 'conversion': [], 'positioning': [],
+                                     'assists': [], 'crossing': [], 'dribbling': [], 'carries': [],
+                                     'involvement': [], 'accuracy': [], 'intent': [], 'receiving': [],
+                                     'aerial': [], 'on_ball': [], 'off_ball': [], 'fouls': []}
 
             # indexed to 2019, 2020, 2021
             has_seasons = [False, False, False]
@@ -262,14 +229,12 @@ if __name__ == '__main__':
                 goals = (2 * seasons_combined_dict['goals'][-1] + seasons_combined_dict['goals'][-2]) / 3
                 shots = (2 * seasons_combined_dict['shots'][-1] + seasons_combined_dict['shots'][-2]) / 3
                 conversion = (2 * seasons_combined_dict['conversion'][-1] + seasons_combined_dict['conversion'][-2]) / 3
-                positioning = (2 * seasons_combined_dict['positioning'][-1] + seasons_combined_dict['positioning'][
-                    -2]) / 3
+                positioning = (2 * seasons_combined_dict['positioning'][-1] + seasons_combined_dict['positioning'][-2]) / 3
                 assists = (2 * seasons_combined_dict['assists'][-1] + seasons_combined_dict['assists'][-2]) / 3
                 crossing = (2 * seasons_combined_dict['crossing'][-1] + seasons_combined_dict['crossing'][-2]) / 3
                 dribbling = (2 * seasons_combined_dict['dribbling'][-1] + seasons_combined_dict['dribbling'][-2]) / 3
                 carries = (2 * seasons_combined_dict['carries'][-1] + seasons_combined_dict['carries'][-2]) / 3
-                involvement = (2 * seasons_combined_dict['involvement'][-1] + seasons_combined_dict['involvement'][
-                    -2]) / 3
+                involvement = (2 * seasons_combined_dict['involvement'][-1] + seasons_combined_dict['involvement'][-2]) / 3
                 accuracy = (2 * seasons_combined_dict['accuracy'][-1] + seasons_combined_dict['accuracy'][-2]) / 3
                 intent = (2 * seasons_combined_dict['intent'][-1] + seasons_combined_dict['intent'][-2]) / 3
                 receiving = (2 * seasons_combined_dict['receiving'][-1] + seasons_combined_dict['receiving'][-2]) / 3
@@ -324,48 +289,27 @@ if __name__ == '__main__':
                 mins = sum(seasons_combined_dict['mins'][:3]) / 3
                 total_mins = sum(seasons_combined_dict['total_mins'][:3]) / 3
                 # weighted 3 for 2021, 2 for 2020 and 1 for 2019 for traits
-                rating = (3 * seasons_combined_dict['rating'][2] + 2 * seasons_combined_dict['rating'][1] +
-                          seasons_combined_dict['rating'][0]) / 6
-                scoring = (3 * seasons_combined_dict['scoring'][2] + 2 * seasons_combined_dict['scoring'][1] +
-                           seasons_combined_dict['scoring'][0]) / 6
-                creating = (3 * seasons_combined_dict['creating'][2] + 2 * seasons_combined_dict['creating'][1] +
-                            seasons_combined_dict['creating'][0]) / 6
-                passing = (3 * seasons_combined_dict['passing'][2] + 2 * seasons_combined_dict['passing'][1] +
-                           seasons_combined_dict['passing'][0]) / 6
-                defending = (3 * seasons_combined_dict['defending'][2] + 2 * seasons_combined_dict['defending'][1] +
-                             seasons_combined_dict['defending'][0]) / 6
-                goals = (3 * seasons_combined_dict['goals'][2] + 2 * seasons_combined_dict['goals'][1] +
-                         seasons_combined_dict['goals'][0]) / 6
-                shots = (3 * seasons_combined_dict['shots'][2] + 2 * seasons_combined_dict['shots'][1] +
-                         seasons_combined_dict['shots'][0]) / 6
-                conversion = (3 * seasons_combined_dict['conversion'][2] + 2 * seasons_combined_dict['conversion'][1] +
-                              seasons_combined_dict['conversion'][0]) / 6
-                positioning = (3 * seasons_combined_dict['positioning'][2] + 2 * seasons_combined_dict['positioning'][
-                    1] + seasons_combined_dict['positioning'][0]) / 6
-                assists = (3 * seasons_combined_dict['assists'][2] + 2 * seasons_combined_dict['assists'][1] +
-                           seasons_combined_dict['assists'][0]) / 6
-                crossing = (3 * seasons_combined_dict['crossing'][2] + 2 * seasons_combined_dict['crossing'][1] +
-                            seasons_combined_dict['crossing'][0]) / 6
-                dribbling = (3 * seasons_combined_dict['dribbling'][2] + 2 * seasons_combined_dict['dribbling'][1] +
-                             seasons_combined_dict['dribbling'][0]) / 6
-                carries = (3 * seasons_combined_dict['carries'][2] + 2 * seasons_combined_dict['carries'][1] +
-                           seasons_combined_dict['carries'][0]) / 6
-                involvement = (3 * seasons_combined_dict['involvement'][2] + 2 * seasons_combined_dict['involvement'][
-                    1] + seasons_combined_dict['involvement'][0]) / 6
-                accuracy = (3 * seasons_combined_dict['accuracy'][2] + 2 * seasons_combined_dict['accuracy'][1] +
-                            seasons_combined_dict['accuracy'][0]) / 6
-                intent = (3 * seasons_combined_dict['intent'][2] + 2 * seasons_combined_dict['intent'][1] +
-                          seasons_combined_dict['intent'][0]) / 6
-                receiving = (3 * seasons_combined_dict['receiving'][2] + 2 * seasons_combined_dict['receiving'][1] +
-                             seasons_combined_dict['receiving'][0]) / 6
-                aerial = (3 * seasons_combined_dict['aerial'][2] + 2 * seasons_combined_dict['aerial'][1] +
-                          seasons_combined_dict['aerial'][0]) / 6
-                on_ball = (3 * seasons_combined_dict['on_ball'][2] + 2 * seasons_combined_dict['on_ball'][1] +
-                           seasons_combined_dict['on_ball'][0]) / 6
-                off_ball = (3 * seasons_combined_dict['off_ball'][2] + 2 * seasons_combined_dict['off_ball'][1] +
-                            seasons_combined_dict['off_ball'][0]) / 6
-                fouls = (3 * seasons_combined_dict['fouls'][2] + 2 * seasons_combined_dict['fouls'][1] +
-                         seasons_combined_dict['fouls'][0]) / 6
+                rating = (3 * seasons_combined_dict['rating'][2] + 2 * seasons_combined_dict['rating'][1] + seasons_combined_dict['rating'][0]) / 6
+                scoring = (3 * seasons_combined_dict['scoring'][2] + 2 * seasons_combined_dict['scoring'][1] + seasons_combined_dict['scoring'][0]) / 6
+                creating = (3 * seasons_combined_dict['creating'][2] + 2 * seasons_combined_dict['creating'][1] + seasons_combined_dict['creating'][0]) / 6
+                passing = (3 * seasons_combined_dict['passing'][2] + 2 * seasons_combined_dict['passing'][1] + seasons_combined_dict['passing'][0]) / 6
+                defending = (3 * seasons_combined_dict['defending'][2] + 2 * seasons_combined_dict['defending'][1] + seasons_combined_dict['defending'][0]) / 6
+                goals = (3 * seasons_combined_dict['goals'][2] + 2 * seasons_combined_dict['goals'][1] + seasons_combined_dict['goals'][0]) / 6
+                shots = (3 * seasons_combined_dict['shots'][2] + 2 * seasons_combined_dict['shots'][1] + seasons_combined_dict['shots'][0]) / 6
+                conversion = (3 * seasons_combined_dict['conversion'][2] + 2 * seasons_combined_dict['conversion'][1] + seasons_combined_dict['conversion'][0]) / 6
+                positioning = (3 * seasons_combined_dict['positioning'][2] + 2 * seasons_combined_dict['positioning'][1] + seasons_combined_dict['positioning'][0]) / 6
+                assists = (3 * seasons_combined_dict['assists'][2] + 2 * seasons_combined_dict['assists'][1] + seasons_combined_dict['assists'][0]) / 6
+                crossing = (3 * seasons_combined_dict['crossing'][2] + 2 * seasons_combined_dict['crossing'][1] + seasons_combined_dict['crossing'][0]) / 6
+                dribbling = (3 * seasons_combined_dict['dribbling'][2] + 2 * seasons_combined_dict['dribbling'][1] + seasons_combined_dict['dribbling'][0]) / 6
+                carries = (3 * seasons_combined_dict['carries'][2] + 2 * seasons_combined_dict['carries'][1] + seasons_combined_dict['carries'][0]) / 6
+                involvement = (3 * seasons_combined_dict['involvement'][2] + 2 * seasons_combined_dict['involvement'][ 1] + seasons_combined_dict['involvement'][0]) / 6
+                accuracy = (3 * seasons_combined_dict['accuracy'][2] + 2 * seasons_combined_dict['accuracy'][1] + seasons_combined_dict['accuracy'][0]) / 6
+                intent = (3 * seasons_combined_dict['intent'][2] + 2 * seasons_combined_dict['intent'][1] + seasons_combined_dict['intent'][0]) / 6
+                receiving = (3 * seasons_combined_dict['receiving'][2] + 2 * seasons_combined_dict['receiving'][1] + seasons_combined_dict['receiving'][0]) / 6
+                aerial = (3 * seasons_combined_dict['aerial'][2] + 2 * seasons_combined_dict['aerial'][1] + seasons_combined_dict['aerial'][0]) / 6
+                on_ball = (3 * seasons_combined_dict['on_ball'][2] + 2 * seasons_combined_dict['on_ball'][1] + seasons_combined_dict['on_ball'][0]) / 6
+                off_ball = (3 * seasons_combined_dict['off_ball'][2] + 2 * seasons_combined_dict['off_ball'][1] + seasons_combined_dict['off_ball'][0]) / 6
+                fouls = (3 * seasons_combined_dict['fouls'][2] + 2 * seasons_combined_dict['fouls'][1] + seasons_combined_dict['fouls'][0]) / 6
 
                 # add aggregated values to dictionary
                 seasons_combined_dict['player_details'].append(player_details)
@@ -405,15 +349,11 @@ if __name__ == '__main__':
 
             # add to new_df
             seasons_combined_df = pd.DataFrame(seasons_combined_dict)
-            agg_all_df = pd.concat([agg_all_df, seasons_combined_df], ignore_index=True)
-            agg_full_df = agg_all_df.reset_index()
+            agg_full_df = pd.concat([agg_full_df, seasons_combined_df], ignore_index=True)
 
     # save dataframes as csv files
-    # cb_full_df.to_csv('Data/df_cb.csv')
-    # fb_full_df.to_csv('Data/df_fb.csv')
-    # dm_full_df.to_csv('Data/df_dm.csv')
-    # m_full_df.to_csv('Data/df_m.csv')
-    # w_full_df.to_csv('Data/df_w.csv')
-    # cf_full_df.to_csv('Data/df_cf.csv')
-    # all_df.to_csv('Data/df_all.csv')
-    agg_all_df.to_csv('Data/df_agg_all.csv')
+    agg_full_df.to_csv('Data/df_full.csv')
+
+if __name__ == '__main__':
+    preprocess()
+    print('Data preprocessed!')
