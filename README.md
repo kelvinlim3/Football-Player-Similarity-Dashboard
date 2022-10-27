@@ -19,10 +19,8 @@ This framework was developed using:
 Clone the repository and navigate to the 'Final' folder. Open command prompt and run:
 
 ```console
-# preprocess data
 python preprocess_data.py
 
-# launch dashboard
 python launch_dashboard.py
 ```
 
