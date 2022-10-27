@@ -433,5 +433,6 @@ def update_charts(player_1_details, player_2_details, player_1_weight, player_2_
         return rating_indicators, composite_traits_charts, raw_traits_charts
 
 if __name__ == '__main__':
-    dashboard.run_server(port=8888, debug=True)
-    # dashboard.run_server(port=8888, debug=False)
+    # dashboard.run_server(port=8888, debug=True)
+    dashboard.run_server(port=8888, debug=False)
+

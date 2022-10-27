@@ -928,29 +928,3 @@ def raw_traits_charts_2(query_player_1_details, query_player_2_details, similar_
     fig.update_yaxes(range=[-4, 4])
 
     return fig
-
-# if __name__ == '__main__':
-#     top_score = 0
-#     top_query_player = ''
-#     top_similar_player = ''
-#     for i, row in df_full.iterrows():
-#         if row['season'] == '2021':
-#             player_details = row['player_details']
-#             position = get_position(player_details)
-#             top_n = 1
-#             traits_weights = None
-#             filters = {'seasons': '2021',
-#                        'leagues': None,
-#                        'primary_positions': None,
-#                        'min_age': None,
-#                        'max_age': None,
-#                        'min_total_mins': None,
-#                        'min_rating': None}
-#             df, top_n_dict = similar_players_df_1(player_details, position, top_n, traits_weights, filters)
-#             score = list(top_n_dict.values())[0]
-#             if score > top_score:
-#                 top_score = score
-#                 top_query_player = player_details
-#                 top_similar_player = list(top_n_dict.keys())[0]
-#
-#     print(f'Top score: {top_score:.2f} between {top_query_player} and {top_similar_player}')
