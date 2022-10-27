@@ -16,11 +16,15 @@ This framework was developed using:
 - Numpy 1.23.3
 
 ## Usage
-Clone the repository and navigate to the 'Final' folder. Open command prompt and run:
+Clone the repository and navigate to the 'Final' folder. Open command prompt, preprocess the data using:
 
 ```console
 python preprocess_data.py
+```
 
+and launch the dashboard using:
+
+```console
 python launch_dashboard.py
 ```
 
