@@ -928,3 +928,6 @@ def raw_traits_charts_2(query_player_1_details, query_player_2_details, similar_
     fig.update_yaxes(range=[-4, 4])
 
     return fig
+
+if __name__ == '__main__':
+    print('This file should not be called directly!')
