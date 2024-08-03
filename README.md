@@ -28,16 +28,23 @@ This framework requires the following:
    cd Football-Player-Similarity-Dashboard/Final
    ```
 
-2. **Prepare the Data**
+2. **Install Dependencies**
 
-   - Navigate to the `Final` folder.
+   - Use the `requirements.txt` file to install the necessary packages. Run this command in your terminal:
+
+     ```bash
+     pip install -r requirements.txt
+     ```
+
+3. **Prepare the Data**
+
    - Run the following command to preprocess the data:
 
      ```bash
      python preprocess_data.py
      ```
 
-3. **Launch the Dashboard**
+4. **Launch the Dashboard**
 
    - After preprocessing, start the interactive dashboard with:
 
@@ -48,7 +55,7 @@ This framework requires the following:
    - Follow the instructions in the console output to open the dashboard in your web browser.
    - The application will be available at http://localhost:8080/.
 
-4. **Explore the Dashboard**
+5. **Explore the Dashboard**
 
    - Use the dashboard to input query players and adjust the filters to find similar players.
    - Visualise player comparisons through radar charts and difference bar charts.
