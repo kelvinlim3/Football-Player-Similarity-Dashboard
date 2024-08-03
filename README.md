@@ -24,7 +24,7 @@ This framework requires the following:
 1. **Clone the Repository**
 
    ```bash
-   git clone https://github.com/your-username/Football-Player-Similarity.git
+   git clone https://github.com/kelvinlimwan/Football-Player-Similarity-Dashboard.git
    cd Football-Player-Similarity
    ```
 
