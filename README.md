@@ -25,7 +25,7 @@ This framework requires the following:
 
    ```bash
    git clone https://github.com/kelvinlimwan/Football-Player-Similarity-Dashboard.git
-   cd Football-Player-Similarity-Dashboard/Final
+   cd Football-Player-Similarity-Dashboard
    ```
 
 2. **Install Dependencies**
@@ -38,6 +38,7 @@ This framework requires the following:
 
 3. **Prepare the Data**
 
+   - Navigate to the `Final` folder.
    - Run the following command to preprocess the data:
 
      ```bash
