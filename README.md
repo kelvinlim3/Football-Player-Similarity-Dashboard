@@ -1,4 +1,4 @@
-# Football Player Similarity
+# Football Player Similarity Dashboard
 
 A comprehensive framework designed to quantify the technical similarity between football players using big data analytics. This tool enables users to compare one or two query players based on various criteria, such as trait importance, filters (seasons, leagues, primary positions, age, total minutes played, and overall rating), and outputs the top 20 similar players. The framework also provides visualizations, including radar charts and difference bar charts, to compare players at three levels of granularity.
 
