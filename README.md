@@ -51,9 +51,9 @@ This framework requires the following:
 4. **Explore the Dashboard**
 
    - Use the dashboard to input query players and adjust the filters to find similar players.
-   - Visualize player comparisons through radar charts and difference bar charts.
+   - Visualise player comparisons through radar charts and difference bar charts.
 
 ## Notes
 
 - Ensure that all dependencies are installed. You can use a virtual environment to manage these dependencies effectively.
-- For further customization and feature enhancements, refer to the documentation in the `Reports/` folder.
+- For further customisation and feature enhancements, refer to the documentation in the `Reports/` folder, which includes the project thesis and other detailed documents.
