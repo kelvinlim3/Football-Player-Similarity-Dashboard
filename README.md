@@ -25,7 +25,7 @@ This framework requires the following:
 
    ```bash
    git clone https://github.com/kelvinlimwan/Football-Player-Similarity-Dashboard.git
-   cd Football-Player-Similarity
+   cd Football-Player-Similarity-Dashboard
    ```
 
 2. **Prepare the Data**
