@@ -5,6 +5,7 @@ import pandas as pd
 from dash import Dash, dcc, html, Input, Output, State, dash_table, no_update
 import dash_bootstrap_components as dbc
 import helper_functions
+import os
 
 # constants
 ALL_PLAYER_DETAILS = helper_functions.get_all_player_details()
@@ -23,6 +24,7 @@ CONTENT_STYLE = { 'position': 'fixed', 'top': 0, 'right': 0, 'bottom': 0, 'margi
 
 ### COMPONENTS
 dashboard = Dash(__name__, external_stylesheets=[dbc.themes.DARKLY])
+server = dashboard.server  # for gunicorn
 
 # query players
 player_1_details = dcc.Dropdown(options=ALL_PLAYER_DETAILS, placeholder='Player 1', className='dropdown', id='player_1_details_dropdown')
@@ -433,6 +435,6 @@ def update_charts(player_1_details, player_2_details, player_1_weight, player_2_
         return rating_indicators, composite_traits_charts, raw_traits_charts
 
 if __name__ == '__main__':
-    # dashboard.run_server(port=8888, debug=True)
-    dashboard.run_server(port=8888, debug=False)
+    port = int(os.environ.get("PORT", 8888))
+    dashboard.run_server(host="0.0.0.0", port=port, debug=False)
 
