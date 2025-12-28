@@ -5,6 +5,7 @@ from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 import pandas as pd
 import numpy as np
+from pathlib import Path
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -27,7 +28,8 @@ DARK_BLUE_HEX = '#4074B2'
 DARK_ORANGE_HEX = '#E77052'
 
 # paths to dataframe csv files
-DF_FULL_PATH = 'Data/df_full.csv'
+BASE_DIR = Path(__file__).resolve().parent
+DF_FULL_PATH = BASE_DIR / 'Data' / 'df_full.csv'
 
 # load dataframes for each position
 df_full = pd.read_csv(DF_FULL_PATH, index_col=0)
