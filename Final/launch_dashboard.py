@@ -4,7 +4,7 @@
 import pandas as pd
 from dash import Dash, dcc, html, Input, Output, State, dash_table, no_update
 import dash_bootstrap_components as dbc
-import helper_functions
+from . import helper_functions
 import os
 
 # constants
